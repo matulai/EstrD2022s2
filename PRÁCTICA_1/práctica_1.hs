@@ -69,8 +69,8 @@ vieneDespues d Domingo = (numeroDeDiaEnSemana Domingo) < (numeroDeDiaEnSemana d)
 
 numeroDeDiaEnSemana :: DiaDeLaSemana -> Int
 numeroDeDiaEnSemana Lunes		= 1
-numeroDeDiaEnSemana	Martes		= 2
-numeroDeDiaEnSemana Miercoles	= 3
+numeroDeDiaEnSemana Martes		= 2
+numeroDeDiaEnSemana Miercoles		= 3
 numeroDeDiaEnSemana Jueves		= 4
 numeroDeDiaEnSemana Viernes		= 5
 numeroDeDiaEnSemana Sabado		= 6
@@ -142,7 +142,7 @@ superaA (Pk t e) (Pk x y) = e > y
 
 cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int 
 cantidadDePokemonDe t (Ent _ p1 p2) = unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p1) t) +
-									  unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p2) t)
+				      unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p2) t)
 	
 unoSi :: Bool -> Int
 unoSi True  = 1
