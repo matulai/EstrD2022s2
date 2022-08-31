@@ -1,8 +1,8 @@
 {-	
 ----------------------------------------------
-||	PRÁCTICA N°1 |TIPOS ALGEBRAICOS|		||
-||	Alumno: Matias Laime					||
-||	Fecha De Inicio: 19/08/2022				||
+||	PRÁCTICA N°1 |TIPOS ALGEBRAICOS|    ||
+||	Alumno: Matias Laime		    ||
+||	Fecha De Inicio: 19/08/2022	    ||
 ----------------------------------------------
 -}
 --2.|NÚMEROS ENTEROS|
@@ -101,7 +101,7 @@ oBien _ _ = True
 --4.|REGISTROS|
 	--1
 data Persona = P String Int deriving Show
-			   --Nombre Edad
+	       --Nombre Edad
 matias = P "Matias" 21
 leandro = P "Leandro" 23
 
@@ -126,9 +126,9 @@ laQueEsMayor x y = primeroSi_SegundoSino (esMayorQueLaOtra x y) (x, y)
 	--2
 data TipoDePokemon = Agua | Electrico | Lucha | Tierra deriving Show 
 data Pokemon = Pk TipoDePokemon Int deriving Show
-							  --Porcentaje de energia del pokemon
+		              --Porcentaje de energia del pokemon
 data Entrenador = Ent String Pokemon Pokemon deriving Show
-					--Nombre
+		    --Nombre
 
 pikachu = Pk Electrico 76
 machoke = Pk Lucha 89
