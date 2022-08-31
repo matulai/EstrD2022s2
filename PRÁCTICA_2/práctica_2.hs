@@ -33,27 +33,19 @@ aplanar (x : xs) = x ++ aplanar xs
     --7
 pertenece :: Eq a => a -> [a] -> Bool
 pertenece _ []       = False
-pertenece x (y : ys) = if x == y 
-                            then True
-                            else pertenece x ys 
+pertenece x (y : ys) = x == y || pertenece x ys
     --8
 apariciones :: Eq a => a -> [a] -> Int
 apariciones _ []       = 0
-apariciones x (y : ys) = if x == y
-                            then 1 + apariciones x ys
-                            else apariciones x ys
+apariciones x (y : ys) = unoSi (x == y) + apariciones x ys
     --9
 losMenoresA :: Int -> [Int] -> [Int]
 losMenoresA _ []       = []
-losMenoresA x (y : ys) = if x > y
-                            then y : losMenoresA x ys
-                            else losMenoresA x ys
+losMenoresA x (y : ys) = elementoListaSi y (x > y) ++ losMenoresA x ys
     --10
 lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
 lasDeLongitudMayorA _ []       = []
-lasDeLongitudMayorA x (y : ys) = if (longitud y) > x
-                                    then y : lasDeLongitudMayorA x ys 
-                                    else lasDeLongitudMayorA x ys 
+lasDeLongitudMayorA x (y : ys) = elementoListaSi y ((longitud y) > x) ++ lasDeLongitudMayorA x ys
     --11
 agregarAlFinal :: [a] -> a -> [a]
 agregarAlFinal [] x       = x : []
@@ -76,16 +68,17 @@ zipMaximos :: [Int] -> [Int] -> [Int]
 zipMaximos [] []             = []
 zipMaximos [] (y : ys)       = y : zipMaximos [] ys
 zipMaximos (x : xs) []       = x : zipMaximos [] xs
-zipMaximos (x : xs) (y : ys) = if x > y
-                               then x : zipMaximos xs ys
-                               else y : zipMaximos xs ys
+zipMaximos (x : xs) (y : ys) = primerElementoSi_Sino (x > y) x y : zipMaximos xs ys
+
+primerElementoSi_Sino :: Bool -> a -> a -> a
+primerElementoSi_Sino True  a _ = a
+primerElementoSi_Sino False _ a = a
+
     --15
 elMinimo :: Ord a => [a] -> a
 --PRECONDICIÓN: La lista no debe ser vacia
 elMinimo (x : []) = x
-elMinimo (x : y : xs) = if x < y
-                        then elMinimo (x : xs)
-                        else elMinimo (y : xs)
+elMinimo (x : y : xs) = elMinimo ((elemento_Si_Sino_ x (x < y) y) : xs)
 
 --2.|RECURSIÓN SOBRE NÚMEROS|
     --1
@@ -119,9 +112,11 @@ edad (P s i) = i
 
 mayoresA :: Int -> [Persona] -> [Persona]
 mayoresA _ []       = []
-mayoresA x (y : ys) = if x > (edad y)
-                      then mayoresA x ys 
-                      else y : mayoresA x ys
+mayoresA x (y : ys) = elementoListaSi y (x < (edad y)) ++ mayoresA x ys
+
+elementoListaSi :: a -> Bool -> [a]
+elementoListaSi a True  = [a]
+elementoListaSi _ False = []
 
 promedioEdad :: [Persona] -> Int 
 --PRECONDICIÓN : La lista posee al menos una persona
@@ -131,9 +126,11 @@ promedioEdad (x : xs) = div (edad x + promedioEdad xs) 2
 elMasViejo :: [Persona] -> Persona
 --PRECONDICIÓN : La lista posee al menos una persona
 elMasViejo (x : []) = x
-elMasViejo (x : y : xs) = if (edad x > edad y)
-                          then elMasViejo (x : xs)
-                          else elMasViejo (y : xs)
+elMasViejo (x : y : xs) = elMasViejo ((elemento_Si_Sino_ x (edad x > edad y) y) : xs)
+    
+elemento_Si_Sino_ :: a -> Bool -> a -> a
+elemento_Si_Sino_ a True _  = a
+elemento_Si_Sino_ _ False a = a
     --2
 data TipoDePokemon = Agua | Fuego | Planta deriving Show
 data Pokemon = Pk TipoDePokemon Int
@@ -141,16 +138,49 @@ data Entrenador = Ent String [Pokemon]
 tipoDePokemonDe :: Pokemon -> TipoDePokemon
 tipoDePokemonDe (Pk t e) = t
 sonDelMismoTipoDePokemon :: TipoDePokemon -> TipoDePokemon -> Bool
-sonDelMismoTipoDePokemon Agua Agua = True
-sonDelMismoTipoDePokemon Fuego Fuego = True
-sonDelMismoTipoDePokemon Planta Planta = True
+sonDelMismoTipoDePokemon Agua   Agua    = True
+sonDelMismoTipoDePokemon Fuego  Fuego   = True
+sonDelMismoTipoDePokemon Planta Planta  = True
 
 cantPokemon :: Entrenador -> Int
-cantPokemon (Ent s p) = longitud p
+cantPokemon (Ent _ p) = longitud p
 
+cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
+cantPokemonDe tp (Ent _ ps) = cantDePokemonesDe tp ps
 
--- cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
--- cantPokemonDe x (Ent s y) = if (sonDelMismoTipoDePokemon (tipoDePokemonDe y) x)
---                                    then 1 + cantPokemonDe x Ent
---                                    else cantPokemonDe x (Ent s ys )
-                    
+cantDePokemonesDe :: TipoDePokemon -> [Pokemon] -> Int
+cantDePokemonesDe _ []          = 0
+cantDePokemonesDe tp (p : ps)   = unoSi(sonDelMismoTipoDePokemon tp (tipoDePokemonDe p)) + cantDePokemonesDe tp ps
+
+unoSi :: Bool -> Int
+unoSi True = 1
+unoSi False = 0
+
+losQueLeGanan :: TipoDePokemon -> Entrenador -> Entrenador -> Int
+losQueLeGanan tp (Ent _ ps1) (Ent _ ps2) = cantDePokemonesDe tp ps1 - cantDePokemonesDe (esEficazContra tp) ps2 + cantDePokemonesDe tp ps1
+
+esEficazContra :: TipoDePokemon -> TipoDePokemon
+esEficazContra  Agua = Fuego
+esEficazContra  Fuego = Planta
+esEficazContra  Planta = Agua
+
+esMaestroPokemon :: Entrenador -> Bool
+esMaestroPokemon (Ent _ ps) = hayPokemonDe Agua ps && hayPokemonDe Fuego ps && hayPokemonDe Planta ps
+
+hayPokemonDe :: TipoDePokemon -> [Pokemon] -> Bool
+hayPokemonDe _ [] = False
+hayPokemonDe tp (p : ps) = sonDelMismoTipoDePokemon tp (tipoDePokemonDe p) || hayPokemonDe tp ps
+
+    --3
+data Seniority = Junior | SemiSenior | Senior
+data Proyecto = Pry String
+data Rol = Dev Seniority Proyecto | Mng Seniority Proyecto
+data Empresa = Emp [Rol]
+
+-- proyectos :: Empresa -> [Proyecto]
+
+-- losDevSenior :: Empresa -> [Proyecto] -> Int
+
+-- cantQueTrabajanEn :: [Proyecto] -> Empresa -> Int
+
+-- asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
