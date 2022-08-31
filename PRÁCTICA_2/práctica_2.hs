@@ -64,8 +64,13 @@ agregar []       ys = ys
 agregar (x : xs) ys = x : agregar xs ys
     --13
 -- reversa :: [a] -> [a]
--- reversa (x:[])   = [] : x
+-- reversa []       = [] 
 -- reversa (x : xs) = reversa xs : x
+
+ultimo :: [a] -> a
+--PRECONDICIÓN: La lista no debe ser vacia
+ultimo (x : []) = x
+ultimo (x : xs) = ultimo xs
     --14
 zipMaximos :: [Int] -> [Int] -> [Int]
 zipMaximos [] []             = []
@@ -75,8 +80,12 @@ zipMaximos (x : xs) (y : ys) = if x > y
                                then x : zipMaximos xs ys
                                else y : zipMaximos xs ys
     --15
--- elMinimo :: Ord a => [a] -> a
--- elMinimo     =
+elMinimo :: Ord a => [a] -> a
+--PRECONDICIÓN: La lista no debe ser vacia
+elMinimo (x : []) = x
+elMinimo (x : y : xs) = if x < y
+                        then elMinimo (x : xs)
+                        else elMinimo (y : xs)
 
 --2.|RECURSIÓN SOBRE NÚMEROS|
     --1
@@ -119,10 +128,12 @@ promedioEdad :: [Persona] -> Int
 promedioEdad (x : []) = edad x
 promedioEdad (x : xs) = div (edad x + promedioEdad xs) 2
 
--- elMasViejo :: [Persona] -> Persona
--- --PRECONDICIÓN : La lista posee al menos una persona
--- elMasViejo (x : []) = x
--- elMasViejo (x : y : xs) = if ()
+elMasViejo :: [Persona] -> Persona
+--PRECONDICIÓN : La lista posee al menos una persona
+elMasViejo (x : []) = x
+elMasViejo (x : y : xs) = if (edad x > edad y)
+                          then elMasViejo (x : xs)
+                          else elMasViejo (y : xs)
     --2
 data TipoDePokemon = Agua | Fuego | Planta deriving Show
 data Pokemon = Pk TipoDePokemon Int
@@ -139,6 +150,7 @@ cantPokemon (Ent s p) = longitud p
 
 
 -- cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
--- cantPokemonDe x (Ent s (y : ys)) = if (sonDelMismoTipoDePokemon (tipoDePokemonDe y) x)
+-- cantPokemonDe x (Ent s y) = if (sonDelMismoTipoDePokemon (tipoDePokemonDe y) x)
 --                                    then 1 + cantPokemonDe x Ent
 --                                    else cantPokemonDe x (Ent s ys )
+                    

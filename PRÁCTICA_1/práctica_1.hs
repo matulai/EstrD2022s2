@@ -17,9 +17,11 @@ divisionYResto :: Int -> Int -> (Int, Int)
 divisionYResto x y = (div x y, mod x y)
 	--1 e)
 maxDelPar :: (Int, Int) -> Int
-maxDelPar (x, y) = if fst(x, y) > snd(x, y)
-		   then fst(x, y)
-		   else snd(x, y)
+maxDelPar (x, y) = primeroSi_SegundoSino (x > y) (x, y)
+
+primeroSi_SegundoSino :: Bool -> (a, a) -> a
+primeroSi_SegundoSino True (x, y) = x
+primeroSi_SegundoSino False (x, y) = y
 	--2
 	{-
 		sucesor (sumar 7 (maxDelPar(2, 1)))
@@ -57,14 +59,23 @@ empiezaConM Miercoles = True
 empiezaConM _ = False
 	--2 c)
 vieneDespues :: DiaDeLaSemana -> DiaDeLaSemana -> Bool
-vieneDespues Lunes Martes = True
-vieneDespues Martes Miercoles = True
-vieneDespues Miercoles Jueves = True
-vieneDespues Jueves Viernes = True
-vieneDespues Viernes Sabado = True
-vieneDespues Sabado Domingo = True
-vieneDespues Domingo Lunes = True
-vieneDespues _ _ = False
+vieneDespues d Lunes = (numeroDeDiaEnSemana Lunes) < (numeroDeDiaEnSemana d)
+vieneDespues d Martes = (numeroDeDiaEnSemana Martes) < (numeroDeDiaEnSemana d)
+vieneDespues d Miercoles = (numeroDeDiaEnSemana Miercoles) < (numeroDeDiaEnSemana d)
+vieneDespues d Jueves = (numeroDeDiaEnSemana Jueves) < (numeroDeDiaEnSemana d)
+vieneDespues d Viernes = (numeroDeDiaEnSemana Viernes) < (numeroDeDiaEnSemana d)
+vieneDespues d Sabado = (numeroDeDiaEnSemana Sabado) < (numeroDeDiaEnSemana d)
+vieneDespues d Domingo = (numeroDeDiaEnSemana Domingo) < (numeroDeDiaEnSemana d)
+
+numeroDeDiaEnSemana :: DiaDeLaSemana -> Int
+numeroDeDiaEnSemana Lunes		= 1
+numeroDeDiaEnSemana	Martes		= 2
+numeroDeDiaEnSemana Miercoles	= 3
+numeroDeDiaEnSemana Jueves		= 4
+numeroDeDiaEnSemana Viernes		= 5
+numeroDeDiaEnSemana Sabado		= 6
+numeroDeDiaEnSemana Domingo		= 7
+
 	--2 d)
 estaEnElMedio :: DiaDeLaSemana -> Bool
 estaEnElMedio Lunes = False
@@ -110,9 +121,7 @@ esMayorQueLaOtra :: Persona -> Persona -> Bool
 esMayorQueLaOtra (P n e) (P x y) = e > y
 
 laQueEsMayor :: Persona -> Persona -> Persona
-laQueEsMayor x y = if (esMayorQueLaOtra x y)
-				   then x
-				   else y
+laQueEsMayor x y = primeroSi_SegundoSino (esMayorQueLaOtra x y) (x, y)
 
 	--2
 data TipoDePokemon = Agua | Electrico | Lucha | Tierra deriving Show 
@@ -132,12 +141,12 @@ superaA :: Pokemon -> Pokemon -> Bool
 superaA (Pk t e) (Pk x y) = e > y
 
 cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int 
-cantidadDePokemonDe t (Ent n p1 p2) = 
-	if ((sonDelMismoTipoDePokemon (tipoDePokemonDe p1) t) && (sonDelMismoTipoDePokemon (tipoDePokemonDe p2) t))
-		then 2
-	else if ((sonDelMismoTipoDePokemon (tipoDePokemonDe p1) t) || (sonDelMismoTipoDePokemon (tipoDePokemonDe p2) t))
-		then 1
-	else 0
+cantidadDePokemonDe t (Ent _ p1 p2) = unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p1) t) +
+									  unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p2) t)
+	
+unoSi :: Bool -> Int
+unoSi True  = 1
+unoSi False = 0
 
 sonDelMismoTipoDePokemon :: TipoDePokemon -> TipoDePokemon -> Bool
 sonDelMismoTipoDePokemon Agua Agua = True
