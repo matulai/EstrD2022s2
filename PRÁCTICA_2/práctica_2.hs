@@ -177,6 +177,35 @@ data Proyecto = Pry String
 data Rol = Dev Seniority Proyecto | Mng Seniority Proyecto
 data Empresa = Emp [Rol]
 
+proyectos :: Empresa -> [Proyecto]
+proyectos e = sinRepetidos (listaDeProyectosEn (rol e))
+
+listaDeProyectosEn :: [Rol] -> [Proyecto]
+listaDeProyectosEn []       = []
+listaDeProyectosEn (r : rs) = (proyectoDe r) : listaDeProyectosEn rs 
+
+sinRepetidos :: [Proyecto] -> [Proyecto] 
+sinRepetidos (p : ps) = elementoListaSi_SinoListaVacia p (existeProyectoEn p ps) ++ sinRepetidos ps      
+
+elementoListaSi_SinoListaVacia :: a -> Bool -> [a]
+elementoListaSi_SinoListaVacia a True  = [a]
+elementoListaSi_SinoListaVacia _ False = []
+
+existeProyectoEn :: Proyecto -> [Proyecto] -> Bool
+existeProyectoEn _ []        = False
+existeProyectoEn p (p1 : ps) = (nombreDeProyecto p == nombreDeProyecto p1) && existeProyectoEn p ps
+existeProyectoEn _ []        = True
+
+nombreDeProyecto :: Proyecto -> String
+nombreDeProyecto (Pry n) = n 
+
+proyectoDe :: Rol -> Proyecto
+proyectoDe (Dev _ p) = p 
+proyectoDe (Mng _ p) = p
+
+rol :: Empresa -> [Rol] 
+rol (Emp r) = r 
+
 -- proyectos :: Empresa -> [Proyecto]
 
 -- losDevSenior :: Empresa -> [Proyecto] -> Int
