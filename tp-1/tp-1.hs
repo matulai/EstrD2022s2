@@ -137,14 +137,19 @@ matu = Ent "Matias" pikachu cubone
 leo = Ent "Leandro" squirtle machoke
 
 superaA :: Pokemon -> Pokemon -> Bool
-superaA (Pk t e) (Pk x y) = e > y
+superaA p1 p2 = esEficaz_Contra (tipoDePokemonDe p1) (tipoDePokemonDe p2)
+
+esEficaz_Contra :: TipoDePokemon -> TipoDePokemon -> Bool
+esEficaz_Contra Agua 	Fuego 	= True
+esEficaz_Contra Fuego 	Planta 	= True
+esEficaz_Contra Planta 	Agua 	= True
+esEficaz_Contra _ 		_		= False
 
 cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int 
 cantidadDePokemonDe t (Ent _ p1 p2) = unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p1) t) +
 				      unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p2) t)
 	
 unoSi :: Bool -> Int
-
 unoSi True 	= 1
 unoSi False	= 0
 
