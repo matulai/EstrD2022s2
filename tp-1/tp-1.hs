@@ -1,8 +1,8 @@
 {-	
 ----------------------------------------------
-||	PRÁCTICA N°1 |TIPOS ALGEBRAICOS|    ||
-||	Alumno: Matias Laime		    ||
-||	Fecha De Inicio: 19/08/2022	    ||
+||	PRÁCTICA N°1 |TIPOS ALGEBRAICOS|    	||
+||	Alumno: Matias Laime		    		||
+||	Fecha De Inicio: 19/08/2022	    		||
 ----------------------------------------------
 -}
 --2.|NÚMEROS ENTEROS|
@@ -20,7 +20,7 @@ maxDelPar :: (Int, Int) -> Int
 maxDelPar (x, y) = primeroSi_SegundoSino (x > y) (x, y)
 
 primeroSi_SegundoSino :: Bool -> (a, a) -> a
-primeroSi_SegundoSino True (x, y) = x
+primeroSi_SegundoSino True (x, y)  = x
 primeroSi_SegundoSino False (x, y) = y
 	--2
 	{-
@@ -38,39 +38,34 @@ opuesto = Norte
 	--1 b)
 iguales :: Dir -> Dir -> Bool
 iguales Norte Norte = True
-iguales Sur Sur = True
-iguales Este Este = True
+iguales Sur   Sur 	= True
+iguales Este  Este  = True
 iguales Oeste Oeste = True
-iguales _ _ = False
+iguales _     _ 	= False
 	--1 c)
 siguiente :: Dir -> Dir
-siguiente Norte = Este
-siguiente Este = Sur
-siguiente Sur = Oeste
+siguiente Norte	= Este
+siguiente Este  = Sur
+siguiente Sur   = Oeste
 siguiente Oeste = Norte
 	--2 a)
 data DiaDeLaSemana = Lunes | Martes | Miercoles | Jueves | Viernes | Sabado | Domingo deriving Show
+
 primerYUltimoDia :: (DiaDeLaSemana, DiaDeLaSemana)
 primerYUltimoDia = (Lunes, Domingo)
 	--2 b)
 empiezaConM :: DiaDeLaSemana -> Bool
-empiezaConM Martes = True
-empiezaConM Miercoles = True
-empiezaConM _ = False
+empiezaConM Martes    	= True
+empiezaConM Miercoles 	= True
+empiezaConM _ 		  	= False
 	--2 c)
 vieneDespues :: DiaDeLaSemana -> DiaDeLaSemana -> Bool
-vieneDespues d Lunes = (numeroDeDiaEnSemana Lunes) < (numeroDeDiaEnSemana d)
-vieneDespues d Martes = (numeroDeDiaEnSemana Martes) < (numeroDeDiaEnSemana d)
-vieneDespues d Miercoles = (numeroDeDiaEnSemana Miercoles) < (numeroDeDiaEnSemana d)
-vieneDespues d Jueves = (numeroDeDiaEnSemana Jueves) < (numeroDeDiaEnSemana d)
-vieneDespues d Viernes = (numeroDeDiaEnSemana Viernes) < (numeroDeDiaEnSemana d)
-vieneDespues d Sabado = (numeroDeDiaEnSemana Sabado) < (numeroDeDiaEnSemana d)
-vieneDespues d Domingo = (numeroDeDiaEnSemana Domingo) < (numeroDeDiaEnSemana d)
+vieneDespues a b = (numeroDeDiaEnSemana a) > (numeroDeDiaEnSemana b)
 
 numeroDeDiaEnSemana :: DiaDeLaSemana -> Int
 numeroDeDiaEnSemana Lunes		= 1
 numeroDeDiaEnSemana Martes		= 2
-numeroDeDiaEnSemana Miercoles		= 3
+numeroDeDiaEnSemana Miercoles	= 3
 numeroDeDiaEnSemana Jueves		= 4
 numeroDeDiaEnSemana Viernes		= 5
 numeroDeDiaEnSemana Sabado		= 6
@@ -78,25 +73,25 @@ numeroDeDiaEnSemana Domingo		= 7
 
 	--2 d)
 estaEnElMedio :: DiaDeLaSemana -> Bool
-estaEnElMedio Lunes = False
-estaEnElMedio Domingo = False
-estaEnElMedio _ = True
+estaEnElMedio Lunes 	= False
+estaEnElMedio Domingo 	= False
+estaEnElMedio _ 		= True
 	--3 a)
 negar :: Bool -> Bool
-negar True = False
+negar True 	= False
 negar False = True
 	--3 b)
 implica :: Bool -> Bool -> Bool
-implica True False = False
-implica _ _ = True
+implica True False 	= False
+implica _ 	 _ 		= True
 	--3 c)
 yTambien :: Bool -> Bool -> Bool
-yTambien True True = True
-yTambien _ _ = False
+yTambien True True 	= True
+yTambien _ 	  _ 	= False
 	--3 d)
 oBien :: Bool -> Bool -> Bool
-oBien False False = False
-oBien _ _ = True
+oBien False False 	= False
+oBien _ 	_ 		= True
 
 --4.|REGISTROS|
 	--1
@@ -112,7 +107,7 @@ edad :: Persona -> Int
 edad (P n e) = e
 
 crecer :: Persona  -> Persona 
-crecer (P n e) = P n (e + 1)
+crecer (P n e) = P n (sucesor e)
 
 cambioDeNombre :: String -> Persona -> Persona
 cambioDeNombre x (P n e) = (P x e)
@@ -145,15 +140,16 @@ cantidadDePokemonDe t (Ent _ p1 p2) = unoSi (sonDelMismoTipoDePokemon (tipoDePok
 				      unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p2) t)
 	
 unoSi :: Bool -> Int
-unoSi True  = 1
-unoSi False = 0
+
+unoSi True 	= 1
+unoSi False	= 0
 
 sonDelMismoTipoDePokemon :: TipoDePokemon -> TipoDePokemon -> Bool
-sonDelMismoTipoDePokemon Agua Agua = True
-sonDelMismoTipoDePokemon Lucha Lucha = True
-sonDelMismoTipoDePokemon Tierra Tierra = True
-sonDelMismoTipoDePokemon Electrico Electrico = True
-sonDelMismoTipoDePokemon _ _ = False
+sonDelMismoTipoDePokemon Agua  	   Agua			= True
+sonDelMismoTipoDePokemon Lucha 	   Lucha 		= True
+sonDelMismoTipoDePokemon Tierra    Tierra 		= True
+sonDelMismoTipoDePokemon Electrico Electrico 	= True
+sonDelMismoTipoDePokemon _ 		   _		 	= False
 
 tipoDePokemonDe :: Pokemon -> TipoDePokemon
 tipoDePokemonDe (Pk t e) = t
@@ -182,7 +178,7 @@ swap (a, b) = (b, a)
 	--2
 estaVacia :: [a] -> Bool
 estaVacia [] = True
-estaVacia _ = False
+estaVacia _	 = False
 
 elPrimero :: [a] -> a
 elPrimero (x : _) = x
