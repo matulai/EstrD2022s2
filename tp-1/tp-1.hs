@@ -50,7 +50,8 @@ siguiente :: Dir -> Dir
 siguiente Norte	= Este
 siguiente Este  = Sur
 siguiente Sur   = Oeste
-siguiente Oeste = Norte
+--Si posee una precondición, que la dirección dada no sea Oeste
+--Es una función Parcial porque si le damos como dato Oeste devuelve un error.
 	--2 a)
 data DiaDeLaSemana = Lunes | Martes | Miercoles | Jueves | Viernes | Sabado | Domingo deriving Show
 
