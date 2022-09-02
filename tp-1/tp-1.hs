@@ -33,8 +33,11 @@ primeroSi_SegundoSino False (x, y) = y
 --3.|TIPOS ENUMERATIVOS|
 	--1 a)
 data Dir = Norte | Este | Sur | Oeste deriving Show
-opuesto :: Dir 
-opuesto = Norte
+opuesto :: Dir -> Dir
+opuesto Norte 	= Sur
+opuesto Este 	= Oeste
+opuesto Sur 	= Norte
+opuesto Oeste 	= Este
 	--1 b)
 iguales :: Dir -> Dir -> Bool
 iguales Norte Norte = True
