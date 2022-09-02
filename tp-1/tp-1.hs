@@ -86,16 +86,16 @@ negar True 	= False
 negar False = True
 	--3 b)
 implica :: Bool -> Bool -> Bool
-implica True False 	= False
+implica True a 	 	= a
 implica _ 	 _ 		= True
 	--3 c)
 yTambien :: Bool -> Bool -> Bool
-yTambien True True 	= True
+yTambien True a 	= a
 yTambien _ 	  _ 	= False
 	--3 d)
 oBien :: Bool -> Bool -> Bool
-oBien False False 	= False
-oBien _ 	_ 		= True
+oBien False a 	= a
+oBien _ 	_ 	= True
 
 --4.|REGISTROS|
 	--1
