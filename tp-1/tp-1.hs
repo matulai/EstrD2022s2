@@ -132,8 +132,8 @@ data Entrenador = Ent String Pokemon Pokemon deriving Show
 charizard = Pk Fuego 77
 squirtle = Pk Agua 54
 bulbasaur = Pk Planta 95
-matu = Ent "Matias" pikachu cubone
-leo = Ent "Leandro" squirtle machoke
+matu = Ent "Matias" charizard bulbasaur
+leo = Ent "Leandro" squirtle charizard
 
 superaA :: Pokemon -> Pokemon -> Bool
 superaA p1 p2 = esEficaz_Contra (tipoDePokemonDe p1) (tipoDePokemonDe p2)
@@ -145,8 +145,8 @@ esEficaz_Contra Planta 	Agua 	= True
 esEficaz_Contra _ 		_		= False
 
 cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int 
-cantidadDePokemonDe t (Ent _ p1 p2) = unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p1) t) +
-				      unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe p2) t)
+cantidadDePokemonDe t e = unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe (elPrimero(pokemonesDe e))) t) +
+				      unoSi (sonDelMismoTipoDePokemon (tipoDePokemonDe (elPrimero(sinElPrimero(pokemonesDe e)))) t)
 	
 unoSi :: Bool -> Int
 unoSi True 	= 1
@@ -154,16 +154,18 @@ unoSi False	= 0
 
 sonDelMismoTipoDePokemon :: TipoDePokemon -> TipoDePokemon -> Bool
 sonDelMismoTipoDePokemon Agua  	   Agua			= True
-sonDelMismoTipoDePokemon Lucha 	   Lucha 		= True
-sonDelMismoTipoDePokemon Tierra    Tierra 		= True
-sonDelMismoTipoDePokemon Electrico Electrico 	= True
+sonDelMismoTipoDePokemon Fuego 	   Fuego 		= True
+sonDelMismoTipoDePokemon Planta    Planta 		= True
 sonDelMismoTipoDePokemon _ 		   _		 	= False
 
 tipoDePokemonDe :: Pokemon -> TipoDePokemon
 tipoDePokemonDe (Pk t e) = t
 
 juntarPokemon :: Entrenador -> Entrenador -> [Pokemon]
-juntarPokemon (Ent n p1 p2) (Ent m p3 p4) = p1 : p2 : p3 : p4 : []
+juntarPokemon e1 e2 = pokemonesDe e1 ++ pokemonesDe e2
+
+pokemonesDe :: Entrenador -> [Pokemon]
+pokemonesDe (Ent n p1 p2) = p1 : p2 : []
 
 --5.|FUNCIONES POLIMÓRFICAS|
 	--1 a)
