@@ -114,7 +114,7 @@ crecer :: Persona  -> Persona
 crecer (P n e) = P n (sucesor e)
 
 cambioDeNombre :: String -> Persona -> Persona
-cambioDeNombre x (P n e) = (P x e)
+cambioDeNombre x (P n e) = P x e
 
 esMayorQueLaOtra :: Persona -> Persona -> Bool
 esMayorQueLaOtra (P n e) (P x y) = e > y
