@@ -123,16 +123,15 @@ laQueEsMayor :: Persona -> Persona -> Persona
 laQueEsMayor x y = primeroSi_SegundoSino (esMayorQueLaOtra x y) (x, y)
 
 	--2
-data TipoDePokemon = Agua | Electrico | Lucha | Tierra deriving Show 
+data TipoDePokemon = Agua | Fuego | Planta deriving Show 
 data Pokemon = Pk TipoDePokemon Int deriving Show
 		              --Porcentaje de energia del pokemon
 data Entrenador = Ent String Pokemon Pokemon deriving Show
 		    --Nombre
 
-pikachu = Pk Electrico 76
-machoke = Pk Lucha 89
+charizard = Pk Fuego 77
 squirtle = Pk Agua 54
-cubone = Pk Tierra 95
+bulbasaur = Pk Planta 95
 matu = Ent "Matias" pikachu cubone
 leo = Ent "Leandro" squirtle machoke
 
