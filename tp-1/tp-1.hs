@@ -24,10 +24,10 @@ primeroSi_SegundoSino True (x, y)  = x
 primeroSi_SegundoSino False (x, y) = y
 	--2
 	{-
-		sucesor (sumar 8 (maxDelPar(0, 1)))
-		primeroSi_SegundoSino (sumar 1 1 >= 2) ((divisionYResto 20 2)), 10)
-		maxDelPar (10,1)
-		sumar (sucesor 4) 5
+		sucesor(sumar 4 (maxDelPar(divisionYResto 50 10) ))
+		maxDelPar(divisionYResto (sucesor 19) (sumar 1 1) )
+		sumar(maxDelPar(divisionYResto 60 20)) (sucesor 6)
+		sucesor(maxDelPar(divisionYResto (sumar 10 8) 2 ) )
 	-}
 
 --3.|TIPOS ENUMERATIVOS|
