@@ -172,9 +172,9 @@ hayPokemonDe _ [] = False
 hayPokemonDe tp (p : ps) = sonDelMismoTipoDePokemon tp (tipoDePokemonDe p) || hayPokemonDe tp ps
 
     --3
-data Seniority = Junior | SemiSenior | Senior
+data Seniority = Junior | SemiSenior | Senior deriving Show
 data Proyecto = Pry String
-data Rol = Dev Seniority Proyecto | Mng Seniority Proyecto
+data Rol = Developer Seniority Proyecto | Management Seniority Proyecto
 data Empresa = Emp [Rol]
 
 proyectos :: Empresa -> [Proyecto]
@@ -185,30 +185,62 @@ listaDeProyectosEn []       = []
 listaDeProyectosEn (r : rs) = (proyectoDe r) : listaDeProyectosEn rs 
 
 sinRepetidos :: [Proyecto] -> [Proyecto] 
-sinRepetidos (p : ps) = elementoListaSi_SinoListaVacia p (existeProyectoEn p ps) ++ sinRepetidos ps      
+sinRepetidos (p : ps) = listaDeElemento_Si_SinoListaVacia p (existeProyectoEn p ps) ++ sinRepetidos ps      
 
-elementoListaSi_SinoListaVacia :: a -> Bool -> [a]
-elementoListaSi_SinoListaVacia a True  = [a]
-elementoListaSi_SinoListaVacia _ False = []
+listaDeElemento_Si_SinoListaVacia :: a -> Bool -> [a]
+listaDeElemento_Si_SinoListaVacia a True  = [a]
+listaDeElemento_Si_SinoListaVacia _ _     = []
 
 existeProyectoEn :: Proyecto -> [Proyecto] -> Bool
-existeProyectoEn _ []        = False
-existeProyectoEn p (p1 : ps) = (nombreDeProyecto p == nombreDeProyecto p1) && existeProyectoEn p ps
-existeProyectoEn _ []        = True
+--PRECONDICIÓN: La Lista no debe tener al menos un elemento.
+existeProyectoEn _ []         = True
+existeProyectoEn p (p1 : p1s) = (nombreDeProyecto p == (nombreDeProyecto p1)) && existeProyectoEn p p1s
 
+--Funciones Observadoras--
 nombreDeProyecto :: Proyecto -> String
 nombreDeProyecto (Pry n) = n 
 
 proyectoDe :: Rol -> Proyecto
-proyectoDe (Dev _ p) = p 
-proyectoDe (Mng _ p) = p
+proyectoDe (Developer _ p) = p 
+proyectoDe (Management _ p) = p
 
 rol :: Empresa -> [Rol] 
 rol (Emp r) = r 
 
--- proyectos :: Empresa -> [Proyecto]
-
 -- losDevSenior :: Empresa -> [Proyecto] -> Int
+
+proyecto1 = Pry "Hola"
+matu = Management Junior proyecto1
+
+losDevSenior :: Empresa -> [Proyecto] -> Int
+losDevSenior e ps = cantidadDeDerrolladoresEnProyectos (soloDesarrolladoresSenior (rol e)) ps 
+
+cantidadDeDerrolladoresEnProyectos :: [Rol] -> [Proyecto] -> Int
+cantidadDeDerrolladoresEnProyectos []       _  = 0
+cantidadDeDerrolladoresEnProyectos (r : rs) ps = unoSi (existeProyectoEn (proyectoDe r) ps) + cantidadDeDerrolladoresEnProyectos rs ps
+
+soloDesarrolladoresSenior :: [Rol] -> [Rol]
+soloDesarrolladoresSenior []       = []
+soloDesarrolladoresSenior (r : rs) = listaDeElemento_Si_SinoListaVacia r (esDesarrollador r && esSeniority_ r Senior ) ++ soloDesarrolladoresSenior rs 
+
+esSeniority_ :: Rol -> Seniority -> Bool
+esSeniority_ r s = igualSeniority (seniorityDe r) s
+
+seniorityDe :: Rol -> Seniority
+seniorityDe (Developer s _) = s
+
+esDesarrollador :: Rol -> Bool
+esDesarrollador (Developer _ _) = True
+esDesarrollador _               = False
+
+igualSeniority :: Seniority -> Seniority -> Bool
+igualSeniority Senior     Senior     = True
+igualSeniority SemiSenior SemiSenior = True
+igualSeniority Junior     Junior     = True
+igualSeniority _          _          = False
+
+
+
 
 -- cantQueTrabajanEn :: [Proyecto] -> Empresa -> Int
 
