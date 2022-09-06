@@ -20,13 +20,11 @@ sucesores []       = []
 sucesores (x : xs) = x + 1 : sucesores xs
     --4
 conjuncion :: [Bool] -> Bool
---PRECONDICIÓN: La lista debe tener al menos un elemento.
-conjuncion (x : []) = x
+conjuncion [] = True
 conjuncion (x : xs) = x && conjuncion xs
     --5
 disyuncion :: [Bool] -> Bool
---PRECONDICIÓN: La lista debe tener al menos un elemento.
-disyuncion (x : []) = x
+disyuncion [] = False
 disyuncion (x : xs) = x || disyuncion xs 
     --6
 aplanar :: [[a]] -> [a]
@@ -65,7 +63,7 @@ zipMaximos :: [Int] -> [Int] -> [Int]
 zipMaximos [] []             = []
 zipMaximos [] (y : ys)       = y : zipMaximos [] ys
 zipMaximos (x : xs) []       = x : zipMaximos [] xs
-zipMaximos (x : xs) (y : ys) = primerElementoSi_Sino x (x < y) y : zipMaximos xs ys
+zipMaximos (x : xs) (y : ys) = primerElementoSi_Sino x (x > y) y : zipMaximos xs ys
 
 primerElementoSi_Sino :: a -> Bool -> a -> a
 primerElementoSi_Sino x True  _ = x
@@ -75,7 +73,7 @@ primerElementoSi_Sino _ False x = x
 elMinimo :: Ord a => [a] -> a
 --PRECONDICIÓN: La lista no debe ser vacia
 elMinimo (x : []) = x
-elMinimo (x : y : xs) = elMinimo ((primerElementoSi_Sino x (x < y) y) : xs)
+elMinimo (x : xs) = min x (elMinimo xs)
 
 --2.|RECURSIÓN SOBRE NÚMEROS|
     --1
@@ -98,7 +96,7 @@ losPrimeros 0 _        = []
 losPrimeros x (y : ys) = y : losPrimeros (x - 1) ys 
 
 sinLosPrimeros :: Int -> [a] -> [a]
-sinLosPrimeros 0 y        = y
+sinLosPrimeros 0 ys       = ys
 sinLosPrimeros _ []       = []
 sinLosPrimeros x (y : ys) = sinLosPrimeros (x - 1) ys 
 
@@ -154,17 +152,17 @@ unoSi :: Bool -> Int
 unoSi True  = 1
 unoSi False = 0
 -----------------------------------------------------
-losQueLeGanan :: TipoDePokemon -> Entrenador -> Entrenador -> Int
-losQueLeGanan tp e e1 = losDeTipo_En_QueLeGananATodos tp (pokemonesDe e) (pokemonesDe e1)
+-- losQueLeGanan :: TipoDePokemon -> Entrenador -> Entrenador -> Int
+-- losQueLeGanan tp e e1 = losDeTipo_En_QueLeGananATodos tp (pokemonesDe e) (pokemonesDe e1)
 
-losDeTipo_En_QueLeGananATodos :: TipoDePokemon -> [Pokemon] -> [Pokemon] -> Int
-losDeTipo_En_QueLeGananATodos _  []   _      = 0
-losDeTipo_En_QueLeGananATodos _  _    []     = 0
-losDeTipo_En_QueLeGananATodos tp (x : xs) ys = unoSi (sonDelMismoTipoDePokemon (tipoDe x) tp && leGanaATodos x ys) + losDeTipo_En_QueLeGananATodos tp xs ys
+-- losDeTipo_En_QueLeGananATodos :: TipoDePokemon -> [Pokemon] -> [Pokemon] -> Int
+-- losDeTipo_En_QueLeGananATodos _  []   _      = 0
+-- losDeTipo_En_QueLeGananATodos _  _    []     = 0
+-- losDeTipo_En_QueLeGananATodos tp (x : xs) ys = unoSi (sonDelMismoTipoDePokemon (tipoDe x) tp && leGanaATodos x ys) + losDeTipo_En_QueLeGananATodos tp xs ys
 
-leGanaATodos :: Pokemon -> [Pokemon] -> Bool
-leGanaATodos _ []         = True
-leGanaATodos p (p1 : p1s) = superaA p p1 && leGanaATodos p p1s
+-- leGanaATodos :: Pokemon -> [Pokemon] -> Bool
+-- leGanaATodos _ []         = True
+-- leGanaATodos p (p1 : p1s) = superaA p p1 && leGanaATodos p p1s
 
 -----------------------------------------------------
 esMaestroPokemon :: Entrenador -> Bool
@@ -175,7 +173,7 @@ esMaestroPokemon e = hayPokemonDe Agua (pokemonesDe e) &&
 hayPokemonDe :: TipoDePokemon -> [Pokemon] -> Bool
 hayPokemonDe _      []        = False
 hayPokemonDe Planta _         = False
-hayPokemonDe tp     (p : ps)  = sonDelMismoTipoDePokemon tp (tipoDePokemonDe p) || hayPokemonDe tp ps
+hayPokemonDe tp     (p : ps)  = sonDelMismoTipoDePokemon tp (tipoDe p) || hayPokemonDe tp ps
 
     --3
 data Seniority = Junior | SemiSenior | Senior deriving Show
@@ -205,6 +203,7 @@ proyectosEn []       = []
 proyectosEn (r : rs) = (proyectoDe r) : proyectosEn rs 
 
 sinProyectosRepetidos :: [Proyecto] -> [Proyecto] 
+sinProyectosRepetidos [] = []
 sinProyectosRepetidos (p : ps) = listaDeElemento_Si_SinoListaVacia p (existeProyectoEn p ps) ++ sinProyectosRepetidos ps      
 
 listaDeElemento_Si_SinoListaVacia :: a -> Bool -> [a]
