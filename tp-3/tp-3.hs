@@ -10,48 +10,40 @@ unoSi False = 0
 unoSi True  = 1
 --1.|TIPOS RECURSIVOS SIMPLES|
     --1.1
-data Color = Azul | Rojo
-data Celda = Bolita Color Celda | CeldaVacia
---Funciones Observadoras
-colorDeCelda :: Celda -> Color
-colorDeCelda (Bolita x _) = x
-
-celda :: Celda -> Celda 
-celda CeldaVacia   = CeldaVacia
-celda (Bolita _ y) = y
+data Color = Azul | Rojo deriving Show
+data Celda = Bolita Color Celda | CeldaVacia deriving Show
+--Pruebas--
+celda1 = Bolita Rojo (Bolita Rojo (Bolita Azul (Bolita Azul CeldaVacia)))
 
 ------------------------------------------------------
 nroBolitas :: Color -> Celda -> Int
 nroBolitas _    CeldaVacia   = 0
-nroBolitas x    (Bolita y z) =  unoSi(sonColoresIguales x y) + nroBolitas x z
-------------------------------------------------------
+nroBolitas x    (Bolita y z) = unoSi(sonColoresIguales x y) + nroBolitas x z
+
 sonColoresIguales :: Color -> Color -> Bool
 sonColoresIguales Azul Azul = True
 sonColoresIguales Rojo Rojo = True
 sonColoresIguales _    _    = False
 ------------------------------------------------------
 poner :: Color -> Celda -> Celda
-poner x CeldaVacia = Bolita x CeldaVacia
+poner x CeldaVacia   = Bolita x CeldaVacia
 poner x (Bolita y z) = Bolita y (poner x z)
 ------------------------------------------------------
 sacar :: Color -> Celda -> Celda
 sacar _   CeldaVacia = CeldaVacia
-sacar x (Bolita y z) = if (sonColoresIguales x y) then z  else Bolita y (sacar x z)
+sacar x (Bolita y z) = if (sonColoresIguales x y) then z  
+                                                  else Bolita y (sacar x z)
 ------------------------------------------------------
 ponerN :: Int -> Color -> Celda -> Celda
-ponerN 0 _ _ = CeldaVacia
-ponerN x y z = ponerN (x - 1) y (poner y z) 
+ponerN 0 _  c = c
+ponerN x cl c = poner cl (ponerN (x - 1) cl c)
+-- ponerN x cl c = ponerN (x - 1) cl (poner cl c) 
 ------------------------------------------------------
     --1.2
 data Objeto = Cacharro | Tesoro
 data Camino = Fin | Cofre [Objeto] Camino | Nada Camino
---Funciones Observadoras
-objetos :: Camino -> [Objeto]
-objetos (Cofre x _) = x
-
-camino :: Camino -> Camino 
-camino (Cofre _ x) = x
-camino (Nada x) = x
+--Pruebas--
+camino = Nada (Cofre [Cacharro, Cacharro] (Nada (Cofre [Cacharro, Tesoro] Fin))) 
 ------------------------------------------------------
 hayTesoro :: Camino -> Bool
 hayTesoro Fin           = False
@@ -76,19 +68,18 @@ hayTesoroEn :: Int -> Camino -> Bool
 hayTesoroEn x y = if (hayTesoro y) then (pasosHastaTesoro y <= x) else False
 ------------------------------------------------------
 alMenosNTesoros :: Int -> Camino -> Bool
-alMenosNTesoros x Fin         = x == 0
+alMenosNTesoros 0 _           = True
+alMenosNTesoros x Fin         = False
 alMenosNTesoros x (Nada y)    = True && alMenosNTesoros x y
 alMenosNTesoros x (Cofre y z) = True && alMenosNTesoros (x - unoSi(hayTesoroEnObjetos y)) z
 ------------------------------------------------------
 cantTesorosEntre :: Int -> Int -> Camino -> Int
 cantTesorosEntre _ 0 _           = 0
 cantTesorosEntre _ _ Fin         = 0
-cantTesorosEntre x y (Nada z)    = 0 + cantTesorosEntre x y z
-cantTesorosEntre x y (Cofre z c) = if (x > 0) 
-                                    then 0 + cantTesorosEntre (x - 1) (y - 1) c 
-                                    else if (y > 0)
-                                    then unoSi(hayTesoroEnObjetos z) + cantTesorosEntre x (y - 1) c 
-                                    else cantTesorosEntre x (y - 1) c 
+cantTesorosEntre x y (Nada z)    = 0 + cantTesorosEntre (x - 1) (y - 1) z
+cantTesorosEntre x y (Cofre z c) = if (x >= 0)      then 0 + cantTesorosEntre (x - 1) (y - 1) c 
+                                   else if (y >= 0) then unoSi(hayTesoroEnObjetos z) + cantTesorosEntre x (y - 1) c 
+                                                    else cantTesorosEntre x (y - 1) c 
 --2.|TIPOS DE ARBÓREOS|
     --2.1
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
@@ -156,8 +147,8 @@ eval (Sum x y) = (eval x) + (eval y)
 eval (Prod x y) = (eval x) * (eval y)
 eval (Neg x) = -(eval x)
 ------------------------------------------------------
-simplificar :: ExpA -> ExpA
-simplificar (Valor x) = x
-simplificar (Sum 0 y) = simplificar y
-simplificar (Sum y 0) = simplificar y
-simplificar 
+-- simplificar :: ExpA -> ExpA
+-- simplificar (Valor x) = x
+-- simplificar (Sum 0 y) = simplificar y
+-- simplificar (Sum y 0) = simplificar y
+-- simplificar 
