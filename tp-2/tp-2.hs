@@ -45,17 +45,19 @@ unoSi False = 0
     --9
 losMenoresA :: Int -> [Int] -> [Int]
 losMenoresA _ []       = []
-losMenoresA x (y : ys) = if (y <= x) then y : losMenoresA x ys
-                                     else losMenoresA x ys
+losMenoresA x (y : ys) = singularSi y (y < x) ++ losMenoresA x ys
+
+singularSi :: a -> Bool -> [a]
+singularSi x True = x : []
+singularSi _ _    = []
     --10
 lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
 lasDeLongitudMayorA _ []       = []
-lasDeLongitudMayorA x (y : ys) = if (longitud y > x) then y : lasDeLongitudMayorA x ys
-                                                     else lasDeLongitudMayorA x ys   
+lasDeLongitudMayorA x (y : ys) = singularSi y (longitud y > x) ++ lasDeLongitudMayorA x ys
     --11
 agregarAlFinal :: [a] -> a -> [a]
-agregarAlFinal []       x = x : []
-agregarAlFinal (y : ys) x = y : agregarAlFinal ys x
+agregarAlFinal []       y = y : []
+agregarAlFinal (x : xs) y = x : agregarAlFinal xs y
     --12
 agregar :: [a] -> [a] -> [a]
 agregar []       ys = ys
@@ -69,8 +71,11 @@ zipMaximos :: [Int] -> [Int] -> [Int]
 zipMaximos [] []             = []
 zipMaximos (x : xs) []       = x : zipMaximos [] xs
 zipMaximos [] (y : ys)       = y : zipMaximos [] ys
-zipMaximos (x : xs) (y : ys) =  if (x > y) then x : zipMaximos xs ys
-                                           else y : zipMaximos xs ys
+zipMaximos (x : xs) (y : ys) = primeroSi_SinoSegundo (x > y) (x,y) : zipMaximos xs ys
+
+primeroSi_SinoSegundo :: Bool -> (a, a) -> a
+primeroSi_SinoSegundo True (x,_) = x
+primeroSi_SinoSegundo _    (_,y) = y
     --15
 elMinimo :: Ord a => [a] -> a
 --PRECONDICIÓN: La lista no debe ser vacia
@@ -85,7 +90,7 @@ factorial 0 = 1
 factorial x = x * factorial (x - 1)
     --2
 cuentaRegresiva :: Int -> [Int]
-cuentaRegresiva 0 = [0]
+cuentaRegresiva 0 = 0 : []
 cuentaRegresiva x = x : cuentaRegresiva (x - 1)
     --3
 repetir :: Int -> a -> [a]
@@ -117,8 +122,7 @@ edad (P _ i) = i
 -----------------------------------------------------
 mayoresA :: Int -> [Persona] -> [Persona]
 mayoresA _ []       = []
-mayoresA x (p : ps) = if (edad p) > x then p : mayoresA x ps
-                                      else mayoresA x ps
+mayoresA x (p : ps) = singularSi p (edad p > x) ++ mayoresA x ps
 -----------------------------------------------------
 promedioEdad :: [Persona] -> Int 
 --PRECONDICIÓN : La lista no debe ser vacía
@@ -134,8 +138,7 @@ elMasViejo (x : []) = x
 elMasViejo (x : xs) = elMasViejoEntre x (elMasViejo xs)
 
 elMasViejoEntre :: Persona -> Persona -> Persona
-elMasViejoEntre p1 p2 = if edad p1 > edad p2 then p1
-                                             else p2
+elMasViejoEntre p1 p2 = primeroSi_SinoSegundo (edad p1 > edad p2) (p1,p2)
     --2
 data TipoDePokemon = Agua | Fuego | Planta deriving Show
 data Pokemon = Pk TipoDePokemon Int deriving Show
@@ -163,8 +166,7 @@ cantPokemonDe tp e = longitud (pokemonesDeTipo tp (pokemonesDe e))
 
 pokemonesDeTipo :: TipoDePokemon -> [Pokemon] -> [Pokemon]
 pokemonesDeTipo _  []       = []
-pokemonesDeTipo tp (p : ps) = if sonDelMismoTipoDePokemon tp (tipoDe p) then p : pokemonesDeTipo tp ps
-                                                               else pokemonesDeTipo tp ps
+pokemonesDeTipo tp (p : ps) = singularSi p (sonDelMismoTipoDePokemon tp (tipoDe p)) ++ pokemonesDeTipo tp ps
 
 sonDelMismoTipoDePokemon :: TipoDePokemon -> TipoDePokemon -> Bool
 sonDelMismoTipoDePokemon Agua   Agua    = True
@@ -230,8 +232,7 @@ proyectosEn (r : rs) = proyectoDe r : proyectosEn rs
 
 sinProyectosRepetidos :: [Proyecto] -> [Proyecto] 
 sinProyectosRepetidos []       = []
-sinProyectosRepetidos (p : ps) = if existeProyecto_En p ps then sinProyectosRepetidos ps
-                                                           else p : sinProyectosRepetidos ps
+sinProyectosRepetidos (p : ps) = singularSi p (not (existeProyecto_En p ps)) ++ sinProyectosRepetidos ps
 
 existeProyecto_En :: Proyecto -> [Proyecto] -> Bool
 existeProyecto_En _ []         = False
@@ -248,11 +249,10 @@ cantidadTrabajandoEnAlgunoDe (r : rs) ps = unoSi (existeProyecto_En (proyectoDe 
 
 soloDesarrolladoresSenior :: [Rol] -> [Rol]
 soloDesarrolladoresSenior []       = []
-soloDesarrolladoresSenior (r : rs) = if esDesarrollador r && rolEsSeniority_ r Senior then r : soloDesarrolladoresSenior rs
-                                                                                      else soloDesarrolladoresSenior rs
+soloDesarrolladoresSenior (r : rs) = singularSi r (esDesarrollador r && rol_EsSeniority_ r Senior) ++ soloDesarrolladoresSenior rs
 
-rolEsSeniority_ :: Rol -> Seniority -> Bool
-rolEsSeniority_ r s = igualSeniority (seniorityDe r) s
+rol_EsSeniority_ :: Rol -> Seniority -> Bool
+rol_EsSeniority_ r s = igualSeniority (seniorityDe r) s
 
 esDesarrollador :: Rol -> Bool
 esDesarrollador (Developer _ _) = True
