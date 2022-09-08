@@ -138,8 +138,16 @@ elMasViejoEntre p1 p2 = if edad p1 > edad p2 then p1
                                              else p2
     --2
 data TipoDePokemon = Agua | Fuego | Planta deriving Show
-data Pokemon = Pk TipoDePokemon Int
-data Entrenador = Ent String [Pokemon]
+data Pokemon = Pk TipoDePokemon Int deriving Show
+data Entrenador = Ent String [Pokemon] deriving Show
+--Pruebas--
+squirtle = Pk Agua 1
+charizard = Pk Fuego 2
+bulbasour = Pk Planta 3
+
+entrenador1 = Ent "Matias" [squirtle, squirtle, squirtle]
+entrenador2 = Ent "Leo" [charizard, charizard, charizard]
+entrenador3 = Ent "Pepe" [squirtle, charizard, bulbasour]
 --Funciones observadoras--
 tipoDe :: Pokemon -> TipoDePokemon
 tipoDe (Pk t _) = t
@@ -162,10 +170,16 @@ sonDelMismoTipoDePokemon :: TipoDePokemon -> TipoDePokemon -> Bool
 sonDelMismoTipoDePokemon Agua   Agua    = True
 sonDelMismoTipoDePokemon Fuego  Fuego   = True
 sonDelMismoTipoDePokemon Planta Planta  = True
+sonDelMismoTipoDePokemon _      _       = False
 -----------------------------------------------------
 losQueLeGanan :: TipoDePokemon -> Entrenador -> Entrenador -> Int
-losQueLeGanan tp e1 e2 = if not (sonTodosDelTipo tp (pokemonesDe e2)) then 0
-                                                                      else cantPokemonDe tp e1                                                                      
+losQueLeGanan tp e1 e2 = if sonTodosDelTipo (elTipoConElQueEsEficaz tp) (pokemonesDe e2) then cantPokemonDe tp e1
+                                                                                         else 0
+
+elTipoConElQueEsEficaz :: TipoDePokemon -> TipoDePokemon
+elTipoConElQueEsEficaz Agua   = Fuego
+elTipoConElQueEsEficaz Fuego  = Planta
+elTipoConElQueEsEficaz Planta = Agua
 
 sonTodosDelTipo :: TipoDePokemon -> [Pokemon] -> Bool
 sonTodosDelTipo _ []       = True
@@ -182,9 +196,17 @@ hayPokemonDe _  []       = False
 hayPokemonDe tp (p : ps) = sonDelMismoTipoDePokemon tp (tipoDe p) || hayPokemonDe tp ps
     --3
 data Seniority = Junior | SemiSenior | Senior deriving Show
-data Proyecto = Pry String
-data Rol = Developer Seniority Proyecto | Management Seniority Proyecto
-data Empresa = Emp [Rol]
+data Proyecto = Pry String deriving Show
+data Rol = Developer Seniority Proyecto | Management Seniority Proyecto deriving Show
+data Empresa = Emp [Rol] deriving Show
+--Para pruebas--
+proyecto1 = Pry "Hola"  
+proyecto2 = Pry "Chau"
+
+desarrollador1 = Developer Junior proyecto1
+desarrollador2 = Developer Senior proyecto2
+
+empresa = Emp [desarrollador1, desarrollador2]
 --Funciones Observadoras--
 nombreDeProyecto :: Proyecto -> String
 nombreDeProyecto (Pry n) = n 
@@ -208,16 +230,12 @@ proyectosEn (r : rs) = proyectoDe r : proyectosEn rs
 
 sinProyectosRepetidos :: [Proyecto] -> [Proyecto] 
 sinProyectosRepetidos []       = []
-sinProyectosRepetidos (p : ps) = if existeProyectoEn p ps then p : sinProyectosRepetidos ps
-                                                          else sinProyectosRepetidos ps
+sinProyectosRepetidos (p : ps) = if existeProyecto_En p ps then sinProyectosRepetidos ps
+                                                           else p : sinProyectosRepetidos ps
 
-listaDeElemento_Si_SinoListaVacia :: a -> Bool -> [a]
-listaDeElemento_Si_SinoListaVacia a True  = [a]
-listaDeElemento_Si_SinoListaVacia _ _     = []
-
-existeProyectoEn :: Proyecto -> [Proyecto] -> Bool
-existeProyectoEn _ []         = True
-existeProyectoEn p (p1 : p1s) = (nombreDeProyecto p == (nombreDeProyecto p1)) && existeProyectoEn p p1s
+existeProyecto_En :: Proyecto -> [Proyecto] -> Bool
+existeProyecto_En _ []         = False
+existeProyecto_En p (p1 : p1s) = nombreDeProyecto p == nombreDeProyecto p1 || existeProyecto_En p p1s
 
 -----------------------------------------------------
 
@@ -226,7 +244,7 @@ losDevSenior e ps = cantidadTrabajandoEnAlgunoDe (soloDesarrolladoresSenior (rol
 
 cantidadTrabajandoEnAlgunoDe :: [Rol] -> [Proyecto] -> Int
 cantidadTrabajandoEnAlgunoDe []       _  = 0
-cantidadTrabajandoEnAlgunoDe (r : rs) ps = unoSi (existeProyectoEn (proyectoDe r) ps) + cantidadTrabajandoEnAlgunoDe rs ps
+cantidadTrabajandoEnAlgunoDe (r : rs) ps = unoSi (existeProyecto_En (proyectoDe r) ps) + cantidadTrabajandoEnAlgunoDe rs ps
 
 soloDesarrolladoresSenior :: [Rol] -> [Rol]
 soloDesarrolladoresSenior []       = []
