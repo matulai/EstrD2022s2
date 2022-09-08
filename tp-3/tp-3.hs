@@ -12,10 +12,9 @@ unoSi True  = 1
     --1.1
 data Color = Azul | Rojo deriving Show
 data Celda = Bolita Color Celda | CeldaVacia deriving Show
---Pruebas--
+--Para hacer pruebas--
 celda1 = Bolita Rojo (Bolita Rojo (Bolita Azul (Bolita Azul CeldaVacia)))
 celda2 = Bolita Rojo (Bolita Azul (Bolita Rojo (Bolita Azul CeldaVacia)))
-
 ------------------------------------------------------
 nroBolitas :: Color -> Celda -> Int
 nroBolitas _    CeldaVacia   = 0
@@ -45,7 +44,7 @@ ponerN x cl c          = Bolita cl (ponerN (x - 1) cl c)
     --1.2
 data Objeto = Cacharro | Tesoro
 data Camino = Fin | Cofre [Objeto] Camino | Nada Camino
---Pruebas--
+--Para hacer pruebas--
 camino = Nada (Cofre [Cacharro, Cacharro] (Nada (Cofre [Cacharro, Tesoro] Fin))) 
 ------------------------------------------------------
 hayTesoro :: Camino -> Bool
@@ -77,27 +76,31 @@ alMenosNTesoros x Fin         = False
 alMenosNTesoros x (Nada y)    = True && alMenosNTesoros x y
 alMenosNTesoros x (Cofre y z) = True && alMenosNTesoros (x - unoSi(hayTesoroEnObjetos y)) z
 ------------------------------------------------------
-cantTesorosEntre :: Int -> Int -> Camino -> Int
-cantTesorosEntre _ 0 _           = 0
-cantTesorosEntre _ _ Fin         = 0
-cantTesorosEntre x y (Nada z)    = 0 + cantTesorosEntre (x - 1) (y - 1) z
-cantTesorosEntre x y (Cofre z c) = if (x >= 0)      then 0 + cantTesorosEntre (x - 1) (y - 1) c 
-                                   else if (y >= 0) then unoSi(hayTesoroEnObjetos z) + cantTesorosEntre x (y - 1) c 
-                                                    else cantTesorosEntre x (y - 1) c 
+-- cantTesorosEntre :: Int -> Int -> Camino -> Int
+-- cantTesorosEntre _ 0 _           = 0
+-- cantTesorosEntre _ _ Fin         = 0
+-- cantTesorosEntre x y (Nada z)    = 0 + cantTesorosEntre (x - 1) y z
+-- cantTesorosEntre x y (Cofre z c) = verSiHayTesoroSi c (x <= 0) : cantTesorosEntre 
+
+-- cantTesorosEntre x y (Nada z)    = 0 + cantTesorosEntre (x - 1) (y - 1) z
+-- if (x >= 0)      then 0 + cantTesorosEntre (x - 1) (y - 1) c 
+--                  else if (y >= 0) then unoSi(hayTesoroEnObjetos z) + cantTesorosEntre x (y - 1) c 
+--                  else cantTesorosEntre x (y - 1) c 
+
+
 --2.|TIPOS DE ARBÓREOS|
     --2.1
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
---Pruebas---
+--Para hacer pruebas--
+arbol :: Tree Int
 arbol = NodeT 1 
             (NodeT 2 
                 EmptyT 
-                (NodeT 3 
-                    EmptyT EmptyT)) 
+                    (NodeT 3 EmptyT EmptyT)) 
             (NodeT 2 
                 (NodeT 3 EmptyT 
                     (NodeT 4 
-                        (NodeT 5 
-                            EmptyT EmptyT) 
+                        (NodeT 5 EmptyT EmptyT) 
                     EmptyT)) 
                 EmptyT) 
 ------------------------------------------------------
@@ -123,7 +126,16 @@ aparicionesT x (NodeT y z p) = unoSi(x == y) + aparicionesT x z + aparicionesT x
 ------------------------------------------------------
 leaves :: Tree a -> [a]
 leaves EmptyT        = []
-leaves (NodeT x y z) = x : leaves y ++ leaves z
+leaves (NodeT x y z) = singularSi x (algunoEsHoja y z) ++ leaves y ++ leaves z 
+
+algunoEsHoja :: Tree a -> Tree a -> Bool
+algunoEsHoja EmptyT _      = True 
+algunoEsHoja _      EmptyT = True
+algunoEsHoja _      _      = False
+
+singularSi :: a -> Bool -> [a]
+singularSi a True  = a : []
+singularSi _ False = []
 ------------------------------------------------------
 heightT :: Tree a -> Int
 heightT EmptyT        = 0
@@ -144,14 +156,17 @@ levelN x (NodeT y z p) = if (x == 0) then [y]
                                      else levelN (x - 1) z ++ levelN (x - 1) p 
 ------------------------------------------------------
 -- listPerLevel :: Tree a -> [[a]]
--- listPerLevel EmptyT        = [[EmptyT]]
+-- listPerLevel EmptyT        = [EmptyT]
 -- listPerLevel (NodeT x y z) = [x] : listPerLevel y : listPerLevel z
-------------------------------------------------------
--- ramaMasLarga :: Tree a -> [a]
--- ramaMasLarga EmptyT        = []
--- ramaMasLarga (NodeT x y z) = if (profundidad y > z) 
---                               then x : ramaMasLarga y 
---                               else x : ramaMasLarga y
+----------------------------------------------------
+ramaMasLarga :: Tree a -> [a]
+ramaMasLarga EmptyT        = []
+ramaMasLarga (NodeT x y z) = x : ramaMasLarga (primeroSi_SegundoSino (heightT y > heightT z) (y,z)) 
+
+primeroSi_SegundoSino :: Bool -> (a,a) -> a
+primeroSi_SegundoSino True  (x,_) = x 
+primeroSi_SegundoSino False (_,y) = y
+
 ------------------------------------------------------
 -- todosLosCaminos :: Tree a -> [[a]]
 -- todosLosCaminos EmptyT        = []
