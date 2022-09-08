@@ -216,7 +216,6 @@ listaDeElemento_Si_SinoListaVacia a True  = [a]
 listaDeElemento_Si_SinoListaVacia _ _     = []
 
 existeProyectoEn :: Proyecto -> [Proyecto] -> Bool
---PRECONDICIÓN: La Lista no debe tener al menos un elemento.
 existeProyectoEn _ []         = True
 existeProyectoEn p (p1 : p1s) = (nombreDeProyecto p == (nombreDeProyecto p1)) && existeProyectoEn p p1s
 
