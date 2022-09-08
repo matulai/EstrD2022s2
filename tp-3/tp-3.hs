@@ -14,6 +14,7 @@ data Color = Azul | Rojo deriving Show
 data Celda = Bolita Color Celda | CeldaVacia deriving Show
 --Pruebas--
 celda1 = Bolita Rojo (Bolita Rojo (Bolita Azul (Bolita Azul CeldaVacia)))
+celda2 = Bolita Rojo (Bolita Azul (Bolita Rojo (Bolita Azul CeldaVacia)))
 
 ------------------------------------------------------
 nroBolitas :: Color -> Celda -> Int
@@ -27,7 +28,7 @@ sonColoresIguales _    _    = False
 ------------------------------------------------------
 poner :: Color -> Celda -> Celda
 poner x CeldaVacia   = Bolita x CeldaVacia
-poner x (Bolita y z) = Bolita y (poner x z)
+poner x y            = Bolita x y
 ------------------------------------------------------
 sacar :: Color -> Celda -> Celda
 sacar _   CeldaVacia = CeldaVacia
@@ -35,8 +36,10 @@ sacar x (Bolita y z) = if (sonColoresIguales x y) then z
                                                   else Bolita y (sacar x z)
 ------------------------------------------------------
 ponerN :: Int -> Color -> Celda -> Celda
-ponerN 0 _  c = c
-ponerN x cl c = poner cl (ponerN (x - 1) cl c)
+ponerN 0 _  c          = c
+ponerN _ _  CeldaVacia = CeldaVacia
+ponerN x cl c          = Bolita cl (ponerN (x - 1) cl c)
+-- poner cl (ponerN (x - 1) cl c)
 -- ponerN x cl c = ponerN (x - 1) cl (poner cl c) 
 ------------------------------------------------------
     --1.2
@@ -62,10 +65,11 @@ sonObjetosIguales _        _        = False
 pasosHastaTesoro :: Camino -> Int
 --PRECONDICION: Debe haber al menos un tesoro. 
 pasosHastaTesoro (Nada x)    = 1 + pasosHastaTesoro x
-pasosHastaTesoro (Cofre x y) = if (hayTesoroEnObjetos x) then 0 else 1 + pasosHastaTesoro y
+pasosHastaTesoro (Cofre x y) = unoSi (not (hayTesoroEnObjetos x)) + pasosHastaTesoro y
 ------------------------------------------------------
 hayTesoroEn :: Int -> Camino -> Bool
-hayTesoroEn x y = if (hayTesoro y) then (pasosHastaTesoro y <= x) else False
+hayTesoroEn x y = if (hayTesoro y) then (pasosHastaTesoro y <= x) 
+                                   else False
 ------------------------------------------------------
 alMenosNTesoros :: Int -> Camino -> Bool
 alMenosNTesoros 0 _           = True
@@ -82,7 +86,20 @@ cantTesorosEntre x y (Cofre z c) = if (x >= 0)      then 0 + cantTesorosEntre (x
                                                     else cantTesorosEntre x (y - 1) c 
 --2.|TIPOS DE ARBÓREOS|
     --2.1
-data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
+--Pruebas---
+arbol = NodeT 1 
+            (NodeT 2 
+                EmptyT 
+                (NodeT 3 
+                    EmptyT EmptyT)) 
+            (NodeT 2 
+                (NodeT 3 EmptyT 
+                    (NodeT 4 
+                        (NodeT 5 
+                            EmptyT EmptyT) 
+                    EmptyT)) 
+                EmptyT) 
 ------------------------------------------------------
 sumarT :: Tree Int -> Int
 sumarT EmptyT        = 0
@@ -90,7 +107,7 @@ sumarT (NodeT x y z) = x + sumarT y + sumarT z
 ------------------------------------------------------
 sizeT :: Tree a -> Int
 sizeT EmptyT        = 0
-sizeT (NodeT x y z) = 1 + sizeT y + sizeT z
+sizeT (NodeT _ x y) = 1 + sizeT x + sizeT y
 ------------------------------------------------------
 mapDobleT :: Tree Int -> Tree Int
 mapDobleT EmptyT        = EmptyT
@@ -108,9 +125,9 @@ leaves :: Tree a -> [a]
 leaves EmptyT        = []
 leaves (NodeT x y z) = x : leaves y ++ leaves z
 ------------------------------------------------------
--- heightT :: Tree a -> Int
--- heightT EmptyT = 0
--- heightT x = profundidad x
+heightT :: Tree a -> Int
+heightT EmptyT        = 0
+heightT (NodeT _ x y) = 1 + max (heightT x) (heightT y)
 ------------------------------------------------------
 mirrorT :: Tree a -> Tree a
 --Partiendo de que "y" esta a la izquierda y "z" a la derecha.
@@ -123,7 +140,8 @@ toList (NodeT x y z) = toList y ++ [x] ++ toList z
 ------------------------------------------------------
 levelN :: Int -> Tree a -> [a]
 levelN _ EmptyT        = []
-levelN x (NodeT y z p) = if (x == 0) then [y] else levelN (x - 1) z ++ levelN (x - 1) p 
+levelN x (NodeT y z p) = if (x == 0) then [y] 
+                                     else levelN (x - 1) z ++ levelN (x - 1) p 
 ------------------------------------------------------
 -- listPerLevel :: Tree a -> [[a]]
 -- listPerLevel EmptyT        = [[EmptyT]]
