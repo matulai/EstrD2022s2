@@ -62,7 +62,7 @@ sonObjetosIguales Tesoro   Tesoro   = True
 sonObjetosIguales _        _        = False
 ------------------------------------------------------
 pasosHastaTesoro :: Camino -> Int
---PRECONDICION: Debe haber al menos un tesoro. 
+pasosHastaTesoro Fin         = 0
 pasosHastaTesoro (Nada x)    = 1 + pasosHastaTesoro x
 pasosHastaTesoro (Cofre x y) = unoSi (not (hayTesoroEnObjetos x)) + pasosHastaTesoro y
 ------------------------------------------------------
@@ -76,17 +76,25 @@ alMenosNTesoros x Fin         = False
 alMenosNTesoros x (Nada y)    = True && alMenosNTesoros x y
 alMenosNTesoros x (Cofre y z) = True && alMenosNTesoros (x - unoSi(hayTesoroEnObjetos y)) z
 ------------------------------------------------------
--- cantTesorosEntre :: Int -> Int -> Camino -> Int
--- cantTesorosEntre _ 0 _           = 0
--- cantTesorosEntre _ _ Fin         = 0
--- cantTesorosEntre x y (Nada z)    = 0 + cantTesorosEntre (x - 1) y z
--- cantTesorosEntre x y (Cofre z c) = verSiHayTesoroSi c (x <= 0) : cantTesorosEntre 
+cantTesorosEntre :: Int -> Int -> Camino -> Int
+cantTesorosEntre x y z = cantidadDeTesorosEn (tomarCaminoHasta (y - x + 1) (tomarCaminoDesde x z))
 
--- cantTesorosEntre x y (Nada z)    = 0 + cantTesorosEntre (x - 1) (y - 1) z
--- if (x >= 0)      then 0 + cantTesorosEntre (x - 1) (y - 1) c 
---                  else if (y >= 0) then unoSi(hayTesoroEnObjetos z) + cantTesorosEntre x (y - 1) c 
---                  else cantTesorosEntre x (y - 1) c 
+cantidadDeTesorosEn :: Camino -> Int
+cantidadDeTesorosEn Fin           = 0
+cantidadDeTesorosEn (Nada x)      = 0 + cantidadDeTesorosEn x
+cantidadDeTesorosEn (Cofre x y)   = unoSi (hayTesoroEnObjetos x) + cantidadDeTesorosEn y
 
+tomarCaminoHasta :: Int -> Camino -> Camino
+tomarCaminoHasta 0 _           = Fin
+tomarCaminoHasta _ Fin         = Fin
+tomarCaminoHasta x (Nada y)    = Nada (tomarCaminoHasta (x - 1) y)
+tomarCaminoHasta x (Cofre y z) = Cofre y (tomarCaminoHasta (x - 1) z)
+
+tomarCaminoDesde :: Int -> Camino -> Camino
+tomarCaminoDesde 0 x           = x
+tomarCaminoDesde _ Fin         = Fin
+tomarCaminoDesde x (Nada y)    = tomarCaminoDesde (x - 1) y
+tomarCaminoDesde x (Cofre y z) = tomarCaminoDesde (x - 1) z
 
 --2.|TIPOS DE ARBÓREOS|
     --2.1
@@ -95,14 +103,25 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 arbol :: Tree Int
 arbol = NodeT 1 
             (NodeT 2 
-                EmptyT 
-                    (NodeT 3 EmptyT EmptyT)) 
+                (NodeT 4 EmptyT EmptyT) 
+                (NodeT 3 EmptyT EmptyT)) 
             (NodeT 2 
                 (NodeT 3 EmptyT 
                     (NodeT 4 
                         (NodeT 5 EmptyT EmptyT) 
                     EmptyT)) 
-                EmptyT) 
+                EmptyT)
+-- arbol = NodeT 1 
+--             (NodeT 2 
+--                 EmptyT 
+--                     (NodeT 3 EmptyT EmptyT)) 
+--             (NodeT 2 
+--                 (NodeT 3 EmptyT 
+--                     (NodeT 4 
+--                         (NodeT 5 EmptyT EmptyT) 
+--                     EmptyT)) 
+--                 EmptyT)
+ 
 ------------------------------------------------------
 sumarT :: Tree Int -> Int
 sumarT EmptyT        = 0
@@ -155,9 +174,14 @@ levelN _ EmptyT        = []
 levelN 0 (NodeT y z p) = y : [] 
 levelN x (NodeT y z p) = levelN (x - 1) z ++ levelN (x - 1) p 
 ---------------------------------------------------------
--- listPerLevel :: Tree a -> [[a]]
--- listPerLevel EmptyT        = [EmptyT]
--- listPerLevel (NodeT x y z) = [x] : listPerLevel y : listPerLevel z
+listPerLevel :: Tree a -> [[a]]
+listPerLevel EmptyT        = []
+listPerLevel (NodeT x y z) = [x] : juntarNiveles (listPerLevel y) (listPerLevel z)
+
+juntarNiveles :: [[a]] -> [[a]] -> [[a]]
+juntarNiveles []       x        = x
+juntarNiveles x       []        = x
+juntarNiveles (x : xs) (y : ys) = (x ++ y) : juntarNiveles xs ys 
 ----------------------------------------------------
 ramaMasLarga :: Tree a -> [a]
 ramaMasLarga EmptyT        = []
@@ -168,11 +192,29 @@ primeroSi_SegundoSino True  (x,_) = x
 primeroSi_SegundoSino False (_,y) = y
 
 ------------------------------------------------------
--- todosLosCaminos :: Tree a -> [[a]]
--- todosLosCaminos EmptyT        = []
--- todosLosCaminos (NodeT _ y z) = [y : (todosLosCaminos y)] ++ [z : (todosLosCaminos z) ] 
+todosLosCaminos :: Tree a -> [[a]]
+todosLosCaminos EmptyT        = [[]]
+todosLosCaminos (NodeT x y z) = agregarATodas x (todosLosCaminos y) 
+                             ++ agregarATodas x (todosLosCaminos z)
+todosLosCaminos' :: Tree a -> [[a]]
+todosLosCaminos' EmptyT        = []
+todosLosCaminos' (NodeT x y z) = [x] : agregarATodas x (todosLosCaminos y) 
+                              ++ agregarATodas x (todosLosCaminos z)
+{-
+                                    1
+                                2-------3
+                            2------3 2------3
+                        2-----3  2-3 2-3  2-----3
+-}
+agregarATodas :: a -> [[a]] -> [[a]]
+agregarATodas _ []       = []
+agregarATodas x (y : ys) = (x : y) : agregarATodas x ys
+
     --2.2
 data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA
+
+expresion = Sum (Prod (Neg (Valor 3)) (Sum (Valor 5) (Valor 6) ) ) (Sum (Valor 3) (Valor 4))
+--           (-3 * (5 + 6)) + (3 + 4)
 
 eval :: ExpA -> Int
 eval (Valor x) = x
@@ -182,6 +224,5 @@ eval (Neg x) = -(eval x)
 ------------------------------------------------------
 -- simplificar :: ExpA -> ExpA
 -- simplificar (Valor x) = x
--- simplificar (Sum 0 y) = simplificar y
--- simplificar (Sum y 0) = simplificar y
--- simplificar 
+-- simplificar (_ 0 y) = simplificar y
+-- simplificar (_ y 0) = simplificar y
