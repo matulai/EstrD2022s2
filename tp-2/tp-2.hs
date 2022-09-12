@@ -160,11 +160,11 @@ cantPokemon :: Entrenador -> Int
 cantPokemon e = longitud (pokemonesDe e)
 -----------------------------------------------------
 cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
-cantPokemonDe tp e = longitud (pokemonesDeTipo tp (pokemonesDe e))
+cantPokemonDe tp e = cantidadDePokemonesDeTipo tp (pokemonesDe e)
 
-pokemonesDeTipo :: TipoDePokemon -> [Pokemon] -> [Pokemon]
-pokemonesDeTipo _  []       = []
-pokemonesDeTipo tp (p : ps) = singularSi p (sonDelMismoTipoDePokemon tp (tipoDe p)) ++ pokemonesDeTipo tp ps
+cantidadDePokemonesDeTipo :: TipoDePokemon -> [Pokemon] -> Int
+cantidadDePokemonesDeTipo _  []       = 0 
+cantidadDePokemonesDeTipo tp (p : ps) = unoSi (sonDelMismoTipoDePokemon tp (tipoDe p)) + cantidadDePokemonesDeTipo tp ps
 
 sonDelMismoTipoDePokemon :: TipoDePokemon -> TipoDePokemon -> Bool
 sonDelMismoTipoDePokemon Agua   Agua    = True
