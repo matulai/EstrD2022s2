@@ -156,20 +156,8 @@ levelN 0 (NodeT y z p) = y : []
 levelN x (NodeT y z p) = levelN (x - 1) z ++ levelN (x - 1) p 
 ---------------------------------------------------------
 -- listPerLevel :: Tree a -> [[a]]
--- listPerLevel EmptyT        = [[]]
--- listPerLevel (NodeT x y z) = [[x]] ++ [head (listPerLevel y) ++ head (listPerLevel z)] 
-
--- listPerLevel x = listPerLevel (sinElUltimoNivel x) ++ elUltimoNivelDe x
-
-elUltimoNivelDe :: Tree a -> [a]
-elUltimoNivelDe 
-
-esUltimoNivel :: Tree a -> Bool
-esUltimoNivel (NodeT _ x y) = esEmpty x && esEmpty y
-
-esEmpty :: Tree a -> Bool
-esEmpty EmptyT = True
-esEmpty _      = False
+-- listPerLevel EmptyT        = [EmptyT]
+-- listPerLevel (NodeT x y z) = [x] : listPerLevel y : listPerLevel z
 ----------------------------------------------------
 ramaMasLarga :: Tree a -> [a]
 ramaMasLarga EmptyT        = []
