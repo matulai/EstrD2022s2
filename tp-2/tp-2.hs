@@ -68,9 +68,8 @@ reversa []       = []
 reversa (x : xs) = reversa xs ++ [x]
     --14
 zipMaximos :: [Int] -> [Int] -> [Int]
-zipMaximos [] []             = []
-zipMaximos (x : xs) []       = x : zipMaximos [] xs
-zipMaximos [] (y : ys)       = y : zipMaximos [] ys
+zipMaximos _ []              = [] 
+zipMaximos [] _              = []
 zipMaximos (x : xs) (y : ys) = primeroSi_SinoSegundo (x > y) (x,y) : zipMaximos xs ys
 
 primeroSi_SinoSegundo :: Bool -> (a, a) -> a
