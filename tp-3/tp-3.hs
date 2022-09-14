@@ -104,24 +104,13 @@ arbol :: Tree Int
 arbol = NodeT 1 
             (NodeT 2 
                 (NodeT 4 EmptyT EmptyT) 
-                (NodeT 3 EmptyT EmptyT)) 
-            (NodeT 2 
-                (NodeT 3 EmptyT 
-                    (NodeT 4 
-                        (NodeT 5 EmptyT EmptyT) 
+                (NodeT 5 EmptyT EmptyT)) 
+            (NodeT 3 
+                (NodeT 6 EmptyT 
+                    (NodeT 7 
+                        (NodeT 8 EmptyT EmptyT) 
                     EmptyT)) 
                 EmptyT)
--- arbol = NodeT 1 
---             (NodeT 2 
---                 EmptyT 
---                     (NodeT 3 EmptyT EmptyT)) 
---             (NodeT 2 
---                 (NodeT 3 EmptyT 
---                     (NodeT 4 
---                         (NodeT 5 EmptyT EmptyT) 
---                     EmptyT)) 
---                 EmptyT)
- 
 ------------------------------------------------------
 sumarT :: Tree Int -> Int
 sumarT EmptyT        = 0
@@ -200,21 +189,46 @@ todosLosCaminos' :: Tree a -> [[a]]
 todosLosCaminos' EmptyT        = []
 todosLosCaminos' (NodeT x y z) = [x] : agregarATodas x (todosLosCaminos y) 
                               ++ agregarATodas x (todosLosCaminos z)
-{-
-                                    1
-                                2-------3
-                            2------3 2------3
-                        2-----3  2-3 2-3  2-----3
--}
+
 agregarATodas :: a -> [[a]] -> [[a]]
 agregarATodas _ []       = []
 agregarATodas x (y : ys) = (x : y) : agregarATodas x ys
 
+todosLosCaminos'' :: Tree a -> [[a]]
+todosLosCaminos'' EmptyT        = []
+todosLosCaminos'' (NodeT x y z) = consATodosDosList x (todosLosCaminos y) (todosLosCaminos z)
+
+consATodosDosList :: a -> [[a]] -> [[a]] -> [[a]]
+consATodosDosList x []       []        = [[x]]
+consATodosDosList x yss      []        = consATodos x yss 
+consATodosDosList x []       zss       = consATodos x zss
+consATodosDosList x (ys:yss) (zs: zss) = (x : ys) : (x : zs) : consATodosDosList x yss zss
+
+consATodos :: a -> [[a]] -> [[a]]
+consATodos x []       = [] 
+consATodos x (ys:yss) = (x : ys) : consATodos x yss
+{-
+                                    1
+                              2-----------3
+                         4--------5   ||-----6
+                      ||---||  ||---||    ||----7
+                                            ||-----8
+-}
+{-
+    [[1,2,4], [1,2,5], [1,3,6,7,8]]
+    [[2,4], [2,5]]     [[3,6,7,8]]
+    [[4]]   [[5]]      [[6,7,8]]
+    [[]]    [[]]       [[7,8]]
+                       [[8]]
+                       [[]]
+-}
     --2.2
-data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA
+data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA deriving Show
 
 expresion = Sum (Prod (Neg (Valor 3)) (Sum (Valor 5) (Valor 6) ) ) (Sum (Valor 3) (Valor 4))
 --           (-3 * (5 + 6)) + (3 + 4)
+expresion1 = Sum (Prod (Neg (Valor 3)) (Sum (Valor 0) (Valor 6) ) ) (Sum (Valor 3) (Valor 0))
+--           (-3 * (0 + 6)) + (3 + 0)
 
 eval :: ExpA -> Int
 eval (Valor x) = x
@@ -222,7 +236,18 @@ eval (Sum x y) = (eval x) + (eval y)
 eval (Prod x y) = (eval x) * (eval y)
 eval (Neg x) = -(eval x)
 ------------------------------------------------------
--- simplificar :: ExpA -> ExpA
--- simplificar (Valor x) = x
--- simplificar (_ 0 y) = simplificar y
--- simplificar (_ y 0) = simplificar y
+simplificar :: ExpA -> ExpA
+simplificar (Valor x)  = (Valor x)
+simplificar (Sum x y ) = simplificarSum (simplificar x) (simplificar y)
+simplificar (Prod x y) = simplificarProd (simplificar x) (simplificar y) 
+simplificar (Neg x)    = Neg (simplificar x)
+
+simplificarSum :: ExpA -> ExpA -> ExpA
+simplificarSum (Valor 0) (Valor y) = Valor y
+simplificarSum (Valor x) (Valor 0) = Valor x
+simplificarSum x         y = Sum x y
+
+simplificarProd :: ExpA -> ExpA -> ExpA
+simplificarProd (Valor 0) (Valor y) = Valor 0 
+simplificarProd (Valor 0) (Valor y) = Valor 0
+simplificarProd x          y = Prod x y
