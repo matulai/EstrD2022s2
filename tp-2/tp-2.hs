@@ -268,10 +268,35 @@ igualSeniority _          _          = False
 -- Función ya hecha. "cantidadTrabajandoEnAlgunoDe"
 
 -----------------------------------------------------
+--HACE MUCHOS RECORRIDOS EN LA EMPRESA
+-- asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
+-- asignadosPorProyecto e = proyectoYCantidadTrabajandoEn (proyectos e) (rol e)
+
+-- proyectoYCantidadTrabajandoEn :: [Proyecto] -> [Rol] -> [(Proyecto, Int)]
+-- proyectoYCantidadTrabajandoEn []       _  = []
+-- proyectoYCantidadTrabajandoEn (p : ps) rs = (p, cantidadTrabajandoEnAlgunoDe rs [p]) 
+--                                         : proyectoYCantidadTrabajandoEn ps (sinLosQueTrabajanEnElProyecto p rs)
+
+-- sinLosQueTrabajanEnElProyecto :: Proyecto -> [Rol] -> [Rol]
+-- sinLosQueTrabajanEnElProyecto _     [] = []
+-- sinLosQueTrabajanEnElProyecto p (r:rs) = singularSi r (nombreDeProyecto (ProyectoDe r) == nombreDeProyecto p)
+--                                         ++ sinLosQueTrabajanEnElProyecto rs p
 
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
-asignadosPorProyecto e = proyectoYCantidadTrabajandoEn (proyectos e) (rol e)
+asignadosPorProyecto e = proyectoYCantidadTrabajandoEn (proyectos e)
 
-proyectoYCantidadTrabajandoEn :: [Proyecto] -> [Rol] -> [(Proyecto, Int)]
-proyectoYCantidadTrabajandoEn []       _  = []
-proyectoYCantidadTrabajandoEn (p : ps) rs = (p, cantidadTrabajandoEnAlgunoDe rs [p]) : proyectoYCantidadTrabajandoEn ps rs
+proyectoYCantidadTrabajandoEn :: [Proyecto] -> [(Proyecto,Int)]
+--El 1 es para contar el elemento actual ya que la funcion "cantidadDeProyectos" no la cuenta.
+proyectoYCantidadTrabajandoEn []     = []
+proyectoYCantidadTrabajandoEn (p:ps) = (p ,1 + cantidadDeProyectos p ps) : proyectoYCantidadTrabajandoEn (sinProyecto p ps) 
+
+sinProyecto :: Proyecto -> [Proyecto] -> [Proyecto]
+sinProyecto _  []     = []
+sinProyecto p1 (p:ps) = singularSi p (not (esElMismoProyecto p p1)) ++ sinProyecto p1 ps
+
+esElMismoProyecto :: Proyecto -> Proyecto -> Bool
+esElMismoProyecto p p1 = nombreDeProyecto p == nombreDeProyecto p1
+
+cantidadDeProyectos :: Proyecto -> [Proyecto] -> Int
+cantidadDeProyectos _  []     = 0
+cantidadDeProyectos p1 (p:ps) = unoSi (esElMismoProyecto p1 p) + cantidadDeProyectos p1 ps
