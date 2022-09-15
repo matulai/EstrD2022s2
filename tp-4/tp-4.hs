@@ -8,7 +8,16 @@
 --1.|PIZZA|
 data Pizza = Prepizza | Capa Ingrediente Pizza deriving Show
 data Ingrediente = Salsa | Queso | Jamon | Aceitunas Int deriving Show
+--Para hacer pruebas ---------------------------------
+pizza = Capa Salsa (Capa (Aceitunas 5) (Capa (Aceitunas 6) (Capa Queso (Capa Salsa Prepizza ))))
+--Funciones observadoras------------------------------
+siguientePizza :: Pizza -> Pizza
+siguientePizza (Capa _ p) = p
+siguientePizza _          = Prepizza
 
+ingrediente :: Pizza -> Ingrediente
+ingrediente (Capa i _) = i
+------------------------------------------------------
 cantidadDeCapas :: Pizza -> Int 
 cantidadDeCapas Prepizza   = 0
 cantidadDeCapas (Capa i p) = 1 + cantidadDeCapas p
@@ -35,9 +44,8 @@ tieneSoloSalsaYQueso (Capa i p) = (ingredientesIguales i Salsa || ingredientesIg
 
 duplicarAceitunas :: Pizza -> Pizza
 duplicarAceitunas Prepizza   = Prepizza
-duplicarAceitunas (Capa i p) = if (ingredientesIguales i (Aceitunas 0)) 
-                                then Capa (Aceitunas ((cantidadDeAceitunas i)* 2)) (duplicarAceitunas p) 
-                                else Capa i (duplicarAceitunas p) 
+duplicarAceitunas p          = Capa (duplicarSiSonAceitunas (ingrediente p)) (duplicarAceitunas (siguientePizza p))
 
-cantidadDeAceitunas :: Ingrediente -> Int 
-cantidadDeAceitunas (Aceitunas x) = x
+duplicarSiSonAceitunas :: Ingrediente -> Ingrediente
+duplicarSiSonAceitunas (Aceitunas x) = Aceitunas (x * 2)
+duplicarSiSonAceitunas i             = i

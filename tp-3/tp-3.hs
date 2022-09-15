@@ -181,25 +181,24 @@ primeroSi_SegundoSino True  (x,_) = x
 primeroSi_SegundoSino False (_,y) = y
 
 ------------------------------------------------------
+-- todosLosCaminos :: Tree a -> [[a]]
+-- todosLosCaminos EmptyT        = [[]]
+-- todosLosCaminos (NodeT x y z) = agregarATodas x (todosLosCaminos y) 
+--                              ++ agregarATodas x (todosLosCaminos z)
+-- todosLosCaminos :: Tree a -> [[a]]
+-- todosLosCaminos EmptyT        = []
+-- todosLosCaminos (NodeT x y z) = [x] : agregarATodas x (todosLosCaminos y) 
+--                               ++ agregarATodas x (todosLosCaminos z)
+
+-- agregarATodas :: a -> [[a]] -> [[a]]
+-- agregarATodas _ []       = []
+-- agregarATodas x (y : ys) = (x : y) : agregarATodas x ys
+
 todosLosCaminos :: Tree a -> [[a]]
-todosLosCaminos EmptyT        = [[]]
-todosLosCaminos (NodeT x y z) = agregarATodas x (todosLosCaminos y) 
-                             ++ agregarATodas x (todosLosCaminos z)
-todosLosCaminos' :: Tree a -> [[a]]
-todosLosCaminos' EmptyT        = []
-todosLosCaminos' (NodeT x y z) = [x] : agregarATodas x (todosLosCaminos y) 
-                              ++ agregarATodas x (todosLosCaminos z)
-
-agregarATodas :: a -> [[a]] -> [[a]]
-agregarATodas _ []       = []
-agregarATodas x (y : ys) = (x : y) : agregarATodas x ys
-
-todosLosCaminos'' :: Tree a -> [[a]]
-todosLosCaminos'' EmptyT        = []
-todosLosCaminos'' (NodeT x t1 t2) = consATodosDosList x (todosLosCaminos t1) (todosLosCaminos t2)
+todosLosCaminos EmptyT        = []
+todosLosCaminos (NodeT x t1 t2) = consATodosDosList x (todosLosCaminos t1) (todosLosCaminos t2)
 
 consATodosDosList :: a -> [[a]] -> [[a]] -> [[a]]
---Caso Hoja
 consATodosDosList x []       []        = [x : []]
 consATodosDosList x yss      []        = consATodos x yss 
 consATodosDosList x []       zss       = consATodos x zss
@@ -216,6 +215,8 @@ consATodos x (ys:yss) = (x : ys) : consATodos x yss
                       ||---||  ||---||    ||----7
                                             ||-----8
 -}
+arbol1 :: Tree Int
+arbol1 = NodeT 1 (NodeT 2 EmptyT EmptyT) (NodeT 3 EmptyT EmptyT)
 {-
     [[1,2,4], [1,2,5], [1,3,6,7,8]]
     [[2,4], [2,5]]     [[3,6,7,8]]
