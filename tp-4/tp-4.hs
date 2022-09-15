@@ -76,3 +76,41 @@ esTesoro :: Objeto -> Bool
 esTesoro Tesoro = True
 esTesoro _      = False
 ------------------------------------------------------
+hayTesoroEn :: [Dir] -> Mapa -> Bool
+hayTesoroEn []     m       = contieneTesoro (objetosDelCofreEn m)
+hayTesoroEn _      (Fin _) = False
+hayTesoroEn (d:ds) m       = hayTesoroEn ds (irPorElCamino d m)
+
+irPorElCamino :: Dir -> Mapa -> Mapa
+irPorElCamino _   (Fin m)              = Fin m
+irPorElCamino Izq (Bifurcacion c m1 _) = m1
+irPorElCamino Der (Bifurcacion c _ m2) = m2
+
+objetosDelCofreEn :: Mapa -> [Objeto]
+objetosDelCofreEn (Fin c)             = objetosEn c
+objetosDelCofreEn (Bifurcacion c _ _) = objetosEn c
+------------------------------------------------------
+caminoAlTesoro :: Mapa -> [Dir]
+--PRECONDICION: Existe un tesoro y es unico.
+caminoAlTesoro (Fin c)               =
+caminoAlTesoro (Bifurcacion c m1 m2) =  
+
+irHaciaLaDerecha
+
+{-
+caminoAlTesoro :: Mapa -> [Dir]
+caminoAlTesoro m =
+            case (caminoAlTesoro'' m) of
+                (Just indicacion) -> indicacion 
+                Nothing -> error "no hay tesoro"
+
+caminoAlTesoro'' :: Mapa -> Maybe [Dir]
+caminoAlTesoro'' (Fin c) = 
+            if hayTesoroEnCofre c
+                then Just []
+                else Nothing
+caminoAlTesoro'' (Bifurcacion c m1 m2) = 
+            if hayTesoroEnCofre c 
+                then  
+                else
+-}
