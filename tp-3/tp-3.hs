@@ -196,13 +196,15 @@ agregarATodas x (y : ys) = (x : y) : agregarATodas x ys
 
 todosLosCaminos'' :: Tree a -> [[a]]
 todosLosCaminos'' EmptyT        = []
-todosLosCaminos'' (NodeT x y z) = consATodosDosList x (todosLosCaminos y) (todosLosCaminos z)
+todosLosCaminos'' (NodeT x t1 t2) = consATodosDosList x (todosLosCaminos t1) (todosLosCaminos t2)
 
 consATodosDosList :: a -> [[a]] -> [[a]] -> [[a]]
-consATodosDosList x []       []        = [[x]]
+--Caso Hoja
+consATodosDosList x []       []        = [x : []]
 consATodosDosList x yss      []        = consATodos x yss 
 consATodosDosList x []       zss       = consATodos x zss
-consATodosDosList x (ys:yss) (zs: zss) = (x : ys) : (x : zs) : consATodosDosList x yss zss
+-- consATodosDosList x (ys:yss) (zs: zss) = (x : ys) : (x : zs) : consATodosDosList x yss zss
+consATodosDosList x y z = consATodos x y ++ consATodos x z
 
 consATodos :: a -> [[a]] -> [[a]]
 consATodos x []       = [] 
@@ -229,6 +231,9 @@ expresion = Sum (Prod (Neg (Valor 3)) (Sum (Valor 5) (Valor 6) ) ) (Sum (Valor 3
 --           (-3 * (5 + 6)) + (3 + 4)
 expresion1 = Sum (Prod (Neg (Valor 3)) (Sum (Valor 0) (Valor 6) ) ) (Sum (Valor 3) (Valor 0))
 --           (-3 * (0 + 6)) + (3 + 0)
+expresion2 = Sum (Valor 0) (Valor (-3))
+--          0 + (-3)
+expresion3 = Neg (Valor (-3))
 
 eval :: ExpA -> Int
 eval (Valor x) = x
@@ -240,7 +245,7 @@ simplificar :: ExpA -> ExpA
 simplificar (Valor x)  = (Valor x)
 simplificar (Sum x y ) = simplificarSum (simplificar x) (simplificar y)
 simplificar (Prod x y) = simplificarProd (simplificar x) (simplificar y) 
-simplificar (Neg x)    = Neg (simplificar x)
+simplificar (Neg x)    = simplificarNeg (simplificar x)
 
 simplificarSum :: ExpA -> ExpA -> ExpA
 simplificarSum (Valor 0) (Valor y) = Valor y
@@ -251,3 +256,11 @@ simplificarProd :: ExpA -> ExpA -> ExpA
 simplificarProd (Valor 0) (Valor y) = Valor 0 
 simplificarProd (Valor 0) (Valor y) = Valor 0
 simplificarProd x          y = Prod x y
+
+simplificarNegSi :: Int -> Bool -> Int
+simplificarNegSi x True = -(x)
+simplificarNegSi x _    = x
+
+simplificarNeg :: ExpA -> ExpA
+simplificarNeg (Valor x) = Valor (simplificarNegSi x (x < 0))
+simplificarNeg x         = Neg x     
