@@ -55,7 +55,7 @@ duplicarSiSonAceitunas i             = i
 cantCapasPorPizza :: [Pizza] -> [(Int, Pizza)]
 cantCapasPorPizza []     = []
 cantCapasPorPizza (p:ps) = (cantidadDeCapas p, p) : cantCapasPorPizza ps 
---1.|MAPA DE TESOROS (con bifurcación)|
+--2.|MAPA DE TESOROS (con bifurcación)|
 data Dir = Izq | Der deriving Show
 data Objeto = Tesoro | Chatarra deriving Show
 data Cofre = Cofre [Objeto] deriving Show
@@ -138,3 +138,62 @@ todosLosCaminos (Bifurcacion _ m1 m2) = agregarATodos Izq (todosLosCaminos m1) +
 agregarATodos :: a -> [[a]] -> [[a]]
 agregarATodos x _      = []
 agregarATodos x (ys:yss) = (x : ys) : agregarATodos x yss 
+------------------------------------------------------
+--3.|NAVE ESPACIAL|
+data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
+data Barril = Comida | Oxigeno | Torpedo | Combustible
+data Sector = S SectorId [Componente] [Tripulante]
+type SectorId = String
+type Tripulante = String
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+data Nave = N (Tree Sector)
+--Funciones Observadoras------------------------------
+sectorId :: Sector -> SectorId
+sectorId (S id _ _) = id  
+
+treeDe :: Nave -> Tree Sector
+treeDe (N t) = t 
+------------------------------------------------------
+sectores :: Nave -> [SectorId]
+sectores n = idDeSectoresEn (treeDe n)
+
+idDeSectoresEn :: Tree Sector -> [SectorId]
+idDeSectoresEn EmptyT        = []
+idDeSectoresEn (NodeT x y z) = sectorId x : sectores y ++ sectores z
+------------------------------------------------------
+poderDePropulsion :: Nave -> Int
+poderDePropulsion 
+poderDePropulsion
+------------------------------------------------------
+--4.|MANADA DE LOBOS|
+type Presa = String -- nombre de presa
+type Territorio = String -- nombre de territorio
+type Nombre = String -- nombre de lobo
+data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territorio] Lobo Lobo | Cria Nombre
+data Manada = M Lobo
+--Funciones Observadoras------------------------------
+nombreDe :: Lobo -> Nombre
+nombreDe (Cria n)             = n
+nombreDe (Cazador n _ _ _ _)  = n
+nombreDe (Explorador n _ _ _) = n
+------------------------------------------------------
+exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
+exploradoresPorTerritorio m = sinRepetidos (cantidadDeExploradoresPorTerritorio m (territoriosEn m)) 
+
+cantidadDeExploradoresPorTerritorio :: Manada -> [Territorio] -> [(Territorio, [Nombre])]
+exploradoresPorTerritorio (Cria       _)             ts2     = 
+exploradoresPorTerritorio (Cazador    _ _  l1 l2 l3) ts2     =
+exploradoresPorTerritorio (Explorador n ts1 l1 l2)   (t:ts2) = (t, losQueExploraron t ) : exploradoresPorTerritorio l1 ++ exploradoresPorTerritorio l2
+
+nombreexploradoresEn :: Manada -> [Nombre]
+
+cantidadQueExploraronElTerritorio :: [Territorio] ->  
+
+exploroAlgunTerritorioDe :: []
+
+sinElElemento :: a -> [a] -> [a]
+
+territoriosEn :: Manada -> [Territorios]
+
+sinRepetidos :: [a] -> [a]
+------------------------------------------------------
