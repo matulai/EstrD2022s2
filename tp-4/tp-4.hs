@@ -53,7 +53,7 @@ duplicarSiSonAceitunas (Aceitunas x) = Aceitunas (x * 2)
 duplicarSiSonAceitunas i             = i
 ------------------------------------------------------
 cantCapasPorPizza :: [Pizza] -> [(Int, Pizza)]
-cantCapasPorPizza []     =
+cantCapasPorPizza []     = []
 cantCapasPorPizza (p:ps) = (cantidadDeCapas p, p) : cantCapasPorPizza ps 
 --1.|MAPA DE TESOROS (con bifurcación)|
 data Dir = Izq | Der deriving Show
@@ -76,3 +76,31 @@ esTesoro :: Objeto -> Bool
 esTesoro Tesoro = True
 esTesoro _      = False
 ------------------------------------------------------
+-- caminoAlTesoro :: Mapa -> [Dir]
+-- --PRECONDICIÓN: Debe existir un tesoro y es único.
+-- caminoAlTesoro (Fin c)               = 
+-- caminoAlTesoro (Bifurcacion c m1 m2) = 
+------------------------------------------------------
+caminoDeLaRamaMasLarga :: Mapa -> [Dir]
+caminoDeLaRamaMasLarga (Fin _)               = []
+caminoDeLaRamaMasLarga (Bifurcacion _ m1 m2) = caminoMasLargo (Izq : caminoDeLaRamaMasLarga m1) (Der : caminoDeLaRamaMasLarga m2)
+
+caminoMasLargo :: [a] -> [a] -> [a]
+caminoMasLargo l1 l2 = if length l1 >= length l2 then l1 else l2
+------------------------------------------------------
+tesorosPorNivel :: Mapa -> [[Objeto]]
+tesorosPorNivel (Fin c)               = [objetosEn c]
+tesorosPorNivel (Bifurcacion c m1 m2) = objetosEn c : juntarNiveles (tesorosPorNivel m1) (tesorosPorNivel m2)
+
+juntarNiveles :: [[a]] -> [[a]] -> [[a]]
+juntarNiveles xss      _        = xss
+juntarNiveles _        yss      = yss
+juntarNiveles (xs:xss) (ys:yss) = (xs ++ ys) : juntarNiveles xss yss
+------------------------------------------------------
+todosLosCaminos :: Mapa -> [[Dir]]
+todosLosCaminos (Fin _)               = []
+todosLosCaminos (Bifurcacion _ m1 m2) = agregarATodos Izq (todosLosCaminos m1) ++ agregarATodos Der (todosLosCaminos m2)
+
+agregarATodos :: a -> [[a]] -> [[a]]
+agregarATodos x _      = []
+agregarATodos x (ys:yss) = (x : ys) : agregarATodos x yss 
