@@ -312,4 +312,4 @@ agregarProyecto :: (Proyecto, Int) -> [(Proyecto, Int)] -> [(Proyecto, Int)]
 agregarProyecto pi      []            = [pi]
 agregarProyecto (p1,i1) ((p2,i2):pis) = if (nombreDeProyecto p1 == nombreDeProyecto p2)
                                             then (p2, i1 + i2) : pis
-                                            else agregarProyecto (p1,i1) pis
+                                            else (p2,i2) : agregarProyecto (p1,i1) pis
