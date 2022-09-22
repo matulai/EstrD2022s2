@@ -140,31 +140,173 @@ agregarATodos x _      = []
 agregarATodos x (ys:yss) = (x : ys) : agregarATodos x yss 
 ------------------------------------------------------
 --3.|NAVE ESPACIAL|
-data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
-data Barril = Comida | Oxigeno | Torpedo | Combustible
-data Sector = S SectorId [Componente] [Tripulante]
+data Componente = LanzaTorpedos | Motor Int | Almacen [Barril] deriving Show
+data Barril = Comida | Oxigeno | Torpedo | Combustible deriving Show
+data Sector = S SectorId [Componente] [Tripulante] deriving Show
 type SectorId = String
 type Tripulante = String
-data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
-data Nave = N (Tree Sector)
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
+data Nave = N (Tree Sector) deriving Show
+--Para hacer pruebas----------------------------------
+nave = N (NodeT sector11 
+            (NodeT sector22A 
+                (NodeT sector43A 
+                    EmptyT 
+                    (NodeT sector84A EmptyT EmptyT)) 
+                (NodeT sector53A 
+                    (NodeT sector94A 
+                        EmptyT
+                        (NodeT sector155A EmptyT EmptyT)) 
+                    (NodeT sector104A 
+                        (EmptyT) 
+                        (NodeT sector165A EmptyT EmptyT)))) 
+
+            (NodeT sector32B
+                (NodeT sector63B 
+                    (NodeT sector114B 
+                        (NodeT sector175B EmptyT EmptyT) 
+                        EmptyT) 
+                    (NodeT sector124B EmptyT EmptyT)) 
+                (NodeT sector73B 
+                    (NodeT sector134B EmptyT EmptyT) 
+                    (NodeT sector144B EmptyT EmptyT))))
+{-
+El izquierdo de un nodo Par sera un nodo Impar y el derecho uno Par.
+El izquierdo de un nodo Impar sera un nodo Par y el derecho uno Impar.
+                     /------------------11A------------------\
+             /------22A------\                       /------32B------\
+         /--43A          /--53A--\               /--63B--\       /--73B--\
+        84A          /--94A  /--104A         /--114B    124B    134B    144B
+                    155A    165A            175B  
+-} 
+
+sector11 = S id1 [(Almacen barriles1)] [tripulante1]
+
+sector22A = S id2 [Almacen barriles2] [tripulante2]
+sector43A = S id4 [Almacen barriles3] [tripulante3]
+sector53A = S id5 [Almacen barriles4] [tripulante3]
+sector84A = S id8 [Motor 15] [tripulante4]
+sector94A = S id9 [Motor 65] [tripulante4]
+sector104A = S id10 [Motor 20] [tripulante4]
+sector155A = S id15 [LanzaTorpedos] [tripulante4, tripulante1]
+sector165A = S id16 [LanzaTorpedos] [tripulante4, tripulante1]
+
+sector32B = S id3 [Almacen barriles2] [tripulante2]
+sector63B = S id6 [Almacen barriles3] [tripulante3]
+sector73B = S id7 [Almacen barriles4] [tripulante3]
+sector114B = S id11 [Motor 15] [tripulante4]
+sector124B = S id12 [Motor 65] [tripulante4]
+sector134B = S id13 [Motor 20] [tripulante4]
+sector144B = S id14 [LanzaTorpedos] [tripulante4, tripulante1]
+sector175B = S id17 [LanzaTorpedos] [tripulante4]
+
+tripulante1 = "yo"
+tripulante2 = "tu"
+tripulante3 = "el"
+tripulante4 = "ellos"
+
+id1 = "id1"
+
+id2 = "id22A"
+id4 = "id43A"
+id5 = "id53A"
+id8 = "id84A"
+id9 = "id94A"
+id10 = "id104A"
+id15 = "id155A"
+id16 = "id165A"
+
+id3 = "id32B"
+id6 = "id63B"
+id7 = "id73B"
+id11 = "id114B"
+id12 = "id124B"
+id13 = "id134B"
+id14 = "id145B"
+id17 = "id175B"
+
+barriles1 = [Comida, Oxigeno, Torpedo, Combustible]
+barriles2 = [Comida, Comida, Comida, Comida]
+barriles3 = [Oxigeno, Oxigeno, Oxigeno, Oxigeno]
+barriles4 = [Torpedo, Torpedo, Combustible, Combustible]
 --Funciones Observadoras------------------------------
-sectorId :: Sector -> SectorId
-sectorId (S id _ _) = id  
+idDelSector :: Sector -> SectorId
+idDelSector (S id _ _) = id  
 
 treeDe :: Nave -> Tree Sector
 treeDe (N t) = t 
+
+componentesEn :: Sector -> [Componente] 
+componentesEn (S _ c _) = c
+
+poderDePropulsionDe :: Componente -> Int
+poderDePropulsionDe (Motor p)  = p
+poderDePropulsionDe _          = 0
+
+barrilesEnAlmacen :: Componente -> [Barril]
+barrilesEnAlmacen (Almacen bs) = bs
+
+tripulantesEn :: Sector -> [Tripulante]
+tripulantesEn (S _ _ ts) = ts
 ------------------------------------------------------
 sectores :: Nave -> [SectorId]
 sectores n = idDeSectoresEn (treeDe n)
 
 idDeSectoresEn :: Tree Sector -> [SectorId]
 idDeSectoresEn EmptyT        = []
-idDeSectoresEn (NodeT x y z) = sectorId x : sectores y ++ sectores z
+idDeSectoresEn (NodeT s t1 t2) = idDelSector s : idDeSectoresEn t1 ++ idDeSectoresEn t2
+-- idDeSectoresEn (NodeT x y z) = idDelSector x : ordenarPrimeroL1LuegoPrimeroL2 (idDeSectoresEn y) (idDeSectoresEn z)
+
+ordenarPrimeroL1LuegoPrimeroL2 :: [a] -> [a] -> [a]
+ordenarPrimeroL1LuegoPrimeroL2 xs     []     = xs
+ordenarPrimeroL1LuegoPrimeroL2 []     ys     = ys
+ordenarPrimeroL1LuegoPrimeroL2 (x:xs) (y:ys) = (x : y : []) ++ ordenarPrimeroL1LuegoPrimeroL2 xs ys
 ------------------------------------------------------
 poderDePropulsion :: Nave -> Int
-poderDePropulsion 
-poderDePropulsion
+poderDePropulsion n = propulsionDeLaNave (treeDe n)
+
+propulsionDeLaNave :: Tree Sector -> Int
+propulsionDeLaNave EmptyT           = 0
+propulsionDeLaNave (NodeT s t1 t2)  = poderDePropulsionEnElSector (componentesEn s) + propulsionDeLaNave t1 + propulsionDeLaNave t2
+
+poderDePropulsionEnElSector :: [Componente] -> Int
+poderDePropulsionEnElSector []     = 0
+poderDePropulsionEnElSector (c:cs) = poderDePropulsionDe c + poderDePropulsionEnElSector cs
 ------------------------------------------------------
+barriles :: Nave -> [Barril]
+barriles n = barrilesEnLaNave (treeDe n)
+
+barrilesEnLaNave :: Tree Sector -> [Barril]
+barrilesEnLaNave EmptyT          = []
+barrilesEnLaNave (NodeT s t1 t2) = barrilesEnElSector (componentesEn s) ++ barrilesEnLaNave t1 ++ barrilesEnLaNave t2
+
+barrilesEnElSector :: [Componente] -> [Barril]
+barrilesEnElSector []     = []
+barrilesEnElSector (c:cs) = if (esAlmacen c)
+                                then barrilesEnAlmacen c ++ barrilesEnElSector cs
+                                else barrilesEnElSector cs
+
+esAlmacen :: Componente -> Bool
+esAlmacen (Almacen _) = True
+esAlmacen _           = False
+------------------------------------------------------
+agregarASector :: [Componente] -> SectorId -> Nave -> Nave
+agregarASector cs sid n = N (agregar_AlSector_DeLaNave cs sid (treeDe n))
+
+agregar_AlSector_DeLaNave :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
+agregar_AlSector_DeLaNave _  _   EmptyT          = EmptyT
+agregar_AlSector_DeLaNave cs sid (NodeT s t1 t2) = if (sid == idDelSector s)
+                                                        then NodeT (S sid (cs ++ (componentesEn s)) (tripulantesEn s)) t1 t2
+                                                        else NodeT s (agregar_AlSector_DeLaNave cs sid t1) (agregar_AlSector_DeLaNave cs sid t2)
+------------------------------------------------------
+asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+
+------------------------------------------------------
+sectoresAsignados :: Tripulante -> Nave -> [SectorId]
+
+------------------------------------------------------
+tripulantes :: Nave -> [Tripulante]
+
 --4.|MANADA DE LOBOS|
 type Presa = String -- nombre de presa
 type Territorio = String -- nombre de territorio
@@ -177,23 +319,5 @@ nombreDe (Cria n)             = n
 nombreDe (Cazador n _ _ _ _)  = n
 nombreDe (Explorador n _ _ _) = n
 ------------------------------------------------------
-exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
-exploradoresPorTerritorio m = sinRepetidos (cantidadDeExploradoresPorTerritorio m (territoriosEn m)) 
 
-cantidadDeExploradoresPorTerritorio :: Manada -> [Territorio] -> [(Territorio, [Nombre])]
-exploradoresPorTerritorio (Cria       _)             ts2     = 
-exploradoresPorTerritorio (Cazador    _ _  l1 l2 l3) ts2     =
-exploradoresPorTerritorio (Explorador n ts1 l1 l2)   (t:ts2) = (t, losQueExploraron t ) : exploradoresPorTerritorio l1 ++ exploradoresPorTerritorio l2
-
-nombreexploradoresEn :: Manada -> [Nombre]
-
-cantidadQueExploraronElTerritorio :: [Territorio] ->  
-
-exploroAlgunTerritorioDe :: []
-
-sinElElemento :: a -> [a] -> [a]
-
-territoriosEn :: Manada -> [Territorios]
-
-sinRepetidos :: [a] -> [a]
 ------------------------------------------------------
