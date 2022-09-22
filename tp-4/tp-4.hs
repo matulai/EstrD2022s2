@@ -291,16 +291,28 @@ esAlmacen (Almacen _) = True
 esAlmacen _           = False
 ------------------------------------------------------
 agregarASector :: [Componente] -> SectorId -> Nave -> Nave
-agregarASector cs sid n = N (agregar_AlSector_DeLaNave cs sid (treeDe n))
+agregarASector cs id n = N (agregar_AlSector_DeLaNave cs sid (treeDe n))
 
 agregar_AlSector_DeLaNave :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
-agregar_AlSector_DeLaNave _  _   EmptyT          = EmptyT
-agregar_AlSector_DeLaNave cs sid (NodeT s t1 t2) = if (sid == idDelSector s)
-                                                        then NodeT (S sid (cs ++ (componentesEn s)) (tripulantesEn s)) t1 t2
-                                                        else NodeT s (agregar_AlSector_DeLaNave cs sid t1) (agregar_AlSector_DeLaNave cs sid t2)
+agregar_AlSector_DeLaNave _  _   EmptyT         = EmptyT
+agregar_AlSector_DeLaNave cs id (NodeT s t1 t2) = if (id == idDelSector s)
+                                                        then NodeT (S id (cs ++ (componentesEn s)) (tripulantesEn s)) t1 t2
+                                                        else NodeT s (agregar_AlSector_DeLaNave cs id t1) (agregar_AlSector_DeLaNave cs id t2)
 ------------------------------------------------------
 asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+--PRECONDICIÓN: Todos los id de la lista existen en la nave.
+asignarTripulanteA t ids (N n) = asignarTripulanteALosSectores t ids n
 
+asignarTripulanteALosSectores :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector 
+asignarTripulanteALosSectores _ _   EmptyT          = EmptyT
+asignarTripulanteALosSectores t ids (NodeT s t1 t2) = if (idDelSector s == )
+
+estaElIdEn :: SectorId -> [SectorId] -> Bool
+estaElIdEn _   []        = False
+estaElIdEn id1 (id2:ids) = id1 == ids2 || estaElIdEn id1 ids
+
+agregarTripulanteA :: Tripulante -> Sector -> Sector
+agregarTripulanteA t (S id cs ts) = S id cs (t : ts) 
 ------------------------------------------------------
 sectoresAsignados :: Tripulante -> Nave -> [SectorId]
 
@@ -321,3 +333,5 @@ nombreDe (Explorador n _ _ _) = n
 ------------------------------------------------------
 
 ------------------------------------------------------
+
+-- lineal cuadratica constante| costos invariante de representacion.
