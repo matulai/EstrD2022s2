@@ -282,21 +282,34 @@ igualSeniority _          _          = False
 -- sinLosQueTrabajanEnElProyecto p (r:rs) = singularSi r (nombreDeProyecto (ProyectoDe r) == nombreDeProyecto p)
 --                                         ++ sinLosQueTrabajanEnElProyecto rs p
 
+-- asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
+-- asignadosPorProyecto e = proyectoYCantidadTrabajandoEn (proyectos e)
+
+-- proyectoYCantidadTrabajandoEn :: [Proyecto] -> [(Proyecto,Int)]
+-- --El 1 es para contar el elemento actual ya que la funcion "cantidadDeProyectos" no la cuenta.
+-- proyectoYCantidadTrabajandoEn []     = []
+-- proyectoYCantidadTrabajandoEn (p:ps) = (p ,1 + cantidadDeProyectos p ps) : proyectoYCantidadTrabajandoEn (sinProyecto p ps) 
+
+-- sinProyecto :: Proyecto -> [Proyecto] -> [Proyecto]
+-- sinProyecto _  []     = []
+-- sinProyecto p1 (p:ps) = singularSi p (not (esElMismoProyecto p p1)) ++ sinProyecto p1 ps
+
+-- esElMismoProyecto :: Proyecto -> Proyecto -> Bool
+-- esElMismoProyecto p p1 = nombreDeProyecto p == nombreDeProyecto p1
+
+-- cantidadDeProyectos :: Proyecto -> [Proyecto] -> Int
+-- cantidadDeProyectos _  []     = 0
+-- cantidadDeProyectos p1 (p:ps) = unoSi (esElMismoProyecto p1 p) + cantidadDeProyectos p1 ps
+
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
-asignadosPorProyecto e = proyectoYCantidadTrabajandoEn (proyectos e)
+asignadosPorProyecto (Emp r) = cantidadDeAsignadosPorProyecto r
 
-proyectoYCantidadTrabajandoEn :: [Proyecto] -> [(Proyecto,Int)]
---El 1 es para contar el elemento actual ya que la funcion "cantidadDeProyectos" no la cuenta.
-proyectoYCantidadTrabajandoEn []     = []
-proyectoYCantidadTrabajandoEn (p:ps) = (p ,1 + cantidadDeProyectos p ps) : proyectoYCantidadTrabajandoEn (sinProyecto p ps) 
+cantidadDeAsignadosPorProyecto :: [Rol] -> [(Proyecto, Int)]
+cantidadDeAsignadosPorProyecto []     = []
+cantidadDeAsignadosPorProyecto (r:rs) = agregarProyecto (proyectoDe r, 1) (cantidadDeAsignadosPorProyecto rs)
 
-sinProyecto :: Proyecto -> [Proyecto] -> [Proyecto]
-sinProyecto _  []     = []
-sinProyecto p1 (p:ps) = singularSi p (not (esElMismoProyecto p p1)) ++ sinProyecto p1 ps
-
-esElMismoProyecto :: Proyecto -> Proyecto -> Bool
-esElMismoProyecto p p1 = nombreDeProyecto p == nombreDeProyecto p1
-
-cantidadDeProyectos :: Proyecto -> [Proyecto] -> Int
-cantidadDeProyectos _  []     = 0
-cantidadDeProyectos p1 (p:ps) = unoSi (esElMismoProyecto p1 p) + cantidadDeProyectos p1 ps
+agregarProyecto :: (Proyecto, Int) -> [(Proyecto, Int)] -> [(Proyecto, Int)]
+agregarProyecto pi      []            = [pi]
+agregarProyecto (p1,i1) ((p2,i2):pis) = if (nombreDeProyecto p1 == nombreDeProyecto p2)
+                                            then (p2, i1 + i2) : pis
+                                            else agregarProyecto (p1,i1) pis
