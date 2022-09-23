@@ -135,12 +135,11 @@ aparicionesT x (NodeT y z p) = unoSi(x == y) + aparicionesT x z + aparicionesT x
 ------------------------------------------------------
 leaves :: Tree a -> [a]
 leaves EmptyT        = []
-leaves (NodeT x y z) = singularSi x (algunoEsHoja y z) ++ leaves y ++ leaves z 
+leaves (NodeT x y z) = singularSi x (formanHoja y z) ++ leaves y ++ leaves z 
 
-algunoEsHoja :: Tree a -> Tree a -> Bool
-algunoEsHoja EmptyT _      = True 
-algunoEsHoja _      EmptyT = True
-algunoEsHoja _      _      = False
+formanHoja :: Tree a -> Tree a -> Bool
+formanHoja EmptyT EmptyT = True
+formanHoja _      _      = False
 
 singularSi :: a -> Bool -> [a]
 singularSi a True  = a : []
