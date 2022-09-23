@@ -174,11 +174,12 @@ juntarNiveles (x : xs) (y : ys) = (x ++ y) : juntarNiveles xs ys
 ----------------------------------------------------
 ramaMasLarga :: Tree a -> [a]
 ramaMasLarga EmptyT        = []
-ramaMasLarga (NodeT x y z) = x : ramaMasLarga (primeroSi_SegundoSino (heightT y > heightT z) (y,z)) 
+ramaMasLarga (NodeT x y z) = x : laMasLarga (ramaMasLarga y) (ramaMasLarga z)
 
-primeroSi_SegundoSino :: Bool -> (a,a) -> a
-primeroSi_SegundoSino True  (x,_) = x 
-primeroSi_SegundoSino False (_,y) = y
+laMasLarga :: [a] -> [a] -> [a]
+laMasLarga xs ys = if (length xs >= length ys) 
+                        then xs
+                        else ys
 
 ------------------------------------------------------
 -- todosLosCaminos :: Tree a -> [[a]]
