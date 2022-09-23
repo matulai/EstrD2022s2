@@ -35,7 +35,6 @@ sacar x (Bolita y z) = if (sonColoresIguales x y) then z
 ------------------------------------------------------
 ponerN :: Int -> Color -> Celda -> Celda
 ponerN 0 _  c          = c
-ponerN _ _  CeldaVacia = CeldaVacia
 ponerN x cl c          = Bolita cl (ponerN (x - 1) cl c)
 -- poner cl (ponerN (x - 1) cl c)
 -- ponerN x cl c = ponerN (x - 1) cl (poner cl c) 
