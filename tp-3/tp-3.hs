@@ -60,9 +60,12 @@ sonObjetosIguales Tesoro   Tesoro   = True
 sonObjetosIguales _        _        = False
 ------------------------------------------------------
 pasosHastaTesoro :: Camino -> Int
-pasosHastaTesoro Fin         = 0
+--PRECONDICIÓN: Tiene que haber al menos un tesoro.
+pasosHastaTesoro Fin         = error ("No hay tesoro")
 pasosHastaTesoro (Nada x)    = 1 + pasosHastaTesoro x
-pasosHastaTesoro (Cofre x y) = unoSi (not (hayTesoroEnObjetos x)) + pasosHastaTesoro y
+pasosHastaTesoro (Cofre x y) = if (hayTesoroEnObjetos x)
+                                    then 0
+                                    else 1 + pasosHastaTesoro y
 ------------------------------------------------------
 hayTesoroEn :: Int -> Camino -> Bool
 hayTesoroEn x y = if (hayTesoro y) then (pasosHastaTesoro y <= x) 
