@@ -186,29 +186,31 @@ laMasLarga xs ys = if (length xs >= length ys)
 -- todosLosCaminos EmptyT        = [[]]
 -- todosLosCaminos (NodeT x y z) = agregarATodas x (todosLosCaminos y) 
 --                              ++ agregarATodas x (todosLosCaminos z)
--- todosLosCaminos :: Tree a -> [[a]]
--- todosLosCaminos EmptyT        = []
--- todosLosCaminos (NodeT x y z) = [x] : agregarATodas x (todosLosCaminos y) 
---                               ++ agregarATodas x (todosLosCaminos z)
-
--- agregarATodas :: a -> [[a]] -> [[a]]
--- agregarATodas _ []       = []
--- agregarATodas x (y : ys) = (x : y) : agregarATodas x ys
-
+--Devuelve todos los caminos posibles dentro del arbol--
 todosLosCaminos :: Tree a -> [[a]]
 todosLosCaminos EmptyT        = []
-todosLosCaminos (NodeT x t1 t2) = consATodosDosList x (todosLosCaminos t1) (todosLosCaminos t2)
+todosLosCaminos (NodeT x y z) = [x] : agregarATodas x (todosLosCaminos y) 
+                              ++ agregarATodas x (todosLosCaminos z)
 
-consATodosDosList :: a -> [[a]] -> [[a]] -> [[a]]
-consATodosDosList x []       []        = [x : []]
-consATodosDosList x yss      []        = consATodos x yss 
-consATodosDosList x []       zss       = consATodos x zss
--- consATodosDosList x (ys:yss) (zs: zss) = (x : ys) : (x : zs) : consATodosDosList x yss zss
-consATodosDosList x y z = consATodos x y ++ consATodos x z
+agregarATodas :: a -> [[a]] -> [[a]]
+agregarATodas _ []       = []
+agregarATodas x (y : ys) = (x : y) : agregarATodas x ys
 
-consATodos :: a -> [[a]] -> [[a]]
-consATodos x []       = [] 
-consATodos x (ys:yss) = (x : ys) : consATodos x yss
+--Devuelve todos los caminos hasta las hojas del arbol--
+-- todosLosCaminos :: Tree a -> [[a]]
+-- todosLosCaminos EmptyT        = []
+-- todosLosCaminos (NodeT x t1 t2) = consATodosDosList x (todosLosCaminos t1) (todosLosCaminos t2)
+
+-- consATodosDosList :: a -> [[a]] -> [[a]] -> [[a]]
+-- consATodosDosList x []       []        = [x : []]
+-- consATodosDosList x yss      []        = consATodos x yss 
+-- consATodosDosList x []       zss       = consATodos x zss
+-- -- consATodosDosList x (ys:yss) (zs: zss) = (x : ys) : (x : zs) : consATodosDosList x yss zss
+-- consATodosDosList x y z = consATodos x y ++ consATodos x z
+
+-- consATodos :: a -> [[a]] -> [[a]]
+-- consATodos x []       = [] 
+-- consATodos x (ys:yss) = (x : ys) : consATodos x yss
 {-
                                     1
                               2-----------3
