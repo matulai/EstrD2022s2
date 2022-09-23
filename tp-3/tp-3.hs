@@ -26,7 +26,6 @@ sonColoresIguales Rojo Rojo = True
 sonColoresIguales _    _    = False
 ------------------------------------------------------
 poner :: Color -> Celda -> Celda
-poner x CeldaVacia   = Bolita x CeldaVacia
 poner x y            = Bolita x y
 ------------------------------------------------------
 sacar :: Color -> Celda -> Celda
