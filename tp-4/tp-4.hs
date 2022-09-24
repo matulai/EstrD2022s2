@@ -20,7 +20,7 @@ ingrediente (Capa i _) = i
 ------------------------------------------------------
 cantidadDeCapas :: Pizza -> Int 
 cantidadDeCapas Prepizza   = 0
-cantidadDeCapas p = 1 + cantidadDeCapas (pizza p)
+cantidadDeCapas (Capa _ p) = 1 + cantidadDeCapas p
 ------------------------------------------------------
 armarPizza :: [Ingrediente] -> Pizza
 armarPizza []     = Prepizza
@@ -222,7 +222,7 @@ id7 = "id73B"
 id11 = "id114B"
 id12 = "id124B"
 id13 = "id134B"
-id14 = "id145B"
+id14 = "id144B"
 id17 = "id175B"
 
 barriles1 = [Comida, Oxigeno, Torpedo, Combustible]
@@ -291,7 +291,7 @@ esAlmacen (Almacen _) = True
 esAlmacen _           = False
 ------------------------------------------------------
 agregarASector :: [Componente] -> SectorId -> Nave -> Nave
-agregarASector cs id n = N (agregar_AlSector_DeLaNave cs sid (treeDe n))
+agregarASector cs id n = N (agregar_AlSector_DeLaNave cs id (treeDe n))
 
 agregar_AlSector_DeLaNave :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
 agregar_AlSector_DeLaNave _  _   EmptyT         = EmptyT
@@ -301,37 +301,111 @@ agregar_AlSector_DeLaNave cs id (NodeT s t1 t2) = if (id == idDelSector s)
 ------------------------------------------------------
 asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
 --PRECONDICIÓN: Todos los id de la lista existen en la nave.
-asignarTripulanteA t ids (N n) = asignarTripulanteALosSectores t ids n
+asignarTripulanteA t ids (N n) = N (asignarTripulanteALosSectores t ids n)
 
-asignarTripulanteALosSectores :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector 
-asignarTripulanteALosSectores _ _   EmptyT          = EmptyT
-asignarTripulanteALosSectores t ids (NodeT s t1 t2) = if (idDelSector s == )
+asignarTripulanteALosSectores :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
+--PRECONDICIÓN: Todos los id de la lista existen en la nave.
+asignarTripulanteALosSectores _ []       tr     = tr
+asignarTripulanteALosSectores t (id:ids) tr     = asignarTripulanteAlSector t id tr
 
-estaElIdEn :: SectorId -> [SectorId] -> Bool
-estaElIdEn _   []        = False
-estaElIdEn id1 (id2:ids) = id1 == ids2 || estaElIdEn id1 ids
+asignarTripulanteAlSector :: Tripulante -> SectorId -> Tree Sector -> Tree Sector
+--PRECONDICIÓN: Todos los id de la lista existen en la nave.
+asignarTripulanteAlSector _ _  EmptyT          = error "No existe el id dado" 
+asignarTripulanteAlSector t id (NodeT s t1 t2) = if id == idDelSector s
+                                                    then NodeT (agregarTripulante t s) t1 t2
+                                                    else NodeT s (asignarTripulanteAlSector t id t1) (asignarTripulanteAlSector t id t2) 
 
-agregarTripulanteA :: Tripulante -> Sector -> Sector
-agregarTripulanteA t (S id cs ts) = S id cs (t : ts) 
+agregarTripulante :: Tripulante -> Sector -> Sector
+agregarTripulante t (S id cs ts) = S id cs (t:ts)
+
 ------------------------------------------------------
 sectoresAsignados :: Tripulante -> Nave -> [SectorId]
+sectoresAsignados t (N n) = sectoresAsignadosN t n 
 
+sectoresAsignadosN :: Tripulante -> Tree Sector -> [SectorId]
+sectoresAsignadosN _ EmptyT          = []
+sectoresAsignadosN t (NodeT s t1 t2) = singularSi (idDelSector s) (estaElTripulanteEn t (tripulantesEn s)) 
+                                      ++ sectoresAsignadosN t t1 
+                                      ++ sectoresAsignadosN t t2
+
+singularSi :: a -> Bool -> [a]
+singularSi a True = [a]
+singularSi _ _    = []
+
+estaElTripulanteEn :: Tripulante -> [Tripulante] -> Bool
+estaElTripulanteEn _  []       = False 
+estaElTripulanteEn t1 (t2:t2s) = t1 == t2 || estaElTripulanteEn t1 t2s
 ------------------------------------------------------
 tripulantes :: Nave -> [Tripulante]
+tripulantes (N n) = tripulantesN n 
 
+tripulantesN :: Tree Sector -> [Tripulante]
+tripulantesN EmptyT          = []
+tripulantesN (NodeT s t1 t2) = agregarTripulanteSinRepetidos (tripulantesEn s) (agregarTripulanteSinRepetidos (tripulantesN t1)  (tripulantesN t2))
+
+agregarTripulanteSinRepetidos :: [Tripulante] -> [Tripulante] -> [Tripulante]
+agregarTripulanteSinRepetidos []       ts2 = ts2
+agregarTripulanteSinRepetidos (t1:ts1) ts2 = if estaElTripulanteEn t1 ts2
+                                                then agregarTripulanteSinRepetidos ts1 ts2
+                                                else t1 : agregarTripulanteSinRepetidos ts1 ts2
 --4.|MANADA DE LOBOS|
 type Presa = String -- nombre de presa
 type Territorio = String -- nombre de territorio
 type Nombre = String -- nombre de lobo
-data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territorio] Lobo Lobo | Cria Nombre
-data Manada = M Lobo
+data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territorio] Lobo Lobo | Cria Nombre deriving Show
+data Manada = M Lobo deriving Show
 --Funciones Observadoras------------------------------
 nombreDe :: Lobo -> Nombre
 nombreDe (Cria n)             = n
 nombreDe (Cazador n _ _ _ _)  = n
 nombreDe (Explorador n _ _ _) = n
 ------------------------------------------------------
+manada = M lobo
 
+lobo = Cazador "Leonardo" ["conejo", "pato", "pescado", "ave"] (Explorador "David" ["rio", "bosque", "laguna"] (Cria "cria1") (Cria "cria2")) (Explorador "John" ["llanura", "rio", "bosque"] (Cria "cria3") (Cria "cria4")) (Cria "cria5")
+------------------------------------------------------
+buenaCaza :: Manada -> Bool
+buenaCaza (M l) = cantidadDePresas l > cantidadDeCrias l
+
+cantidadDePresas :: Lobo -> Int
+cantidadDePresas (Cria _)                = 0
+cantidadDePresas (Explorador _ _ l1 l2)  = cantidadDePresas l1 + cantidadDePresas l2 
+cantidadDePresas (Cazador _ ps l1 l2 l3) = (length ps) + cantidadDePresas l1 + cantidadDePresas l2 + cantidadDePresas l3
+
+cantidadDeCrias :: Lobo -> Int
+cantidadDeCrias (Cria _)               = 1
+cantidadDeCrias (Explorador _ _ l1 l2) = cantidadDeCrias l1 + cantidadDeCrias l2
+cantidadDeCrias (Cazador _ _ l1 l2 l3) = cantidadDeCrias l1 + cantidadDeCrias l2 + cantidadDeCrias l3
+------------------------------------------------------
+elAlfa :: Manada -> (Nombre, Int)
+elAlfa (M l) = elAlfaM l
+
+elAlfaM :: Lobo -> (Nombre, Int)
+elAlfaM (Cria n)                = (n,0)
+elAlfaM (Explorador n _ l1 l2)  = elQueTieneMasPresas [(n, 0) ,elAlfaM l1 ,elAlfaM l2]
+elAlfaM (Cazador n ps l1 l2 l3) = elQueTieneMasPresas [(n, (length ps)) ,elAlfaM l1 ,elAlfaM l2 ,elAlfaM l3]
+
+elQueTieneMasPresas :: [(Nombre, Int)] -> (Nombre, Int)
+elQueTieneMasPresas (x : []) = x
+elQueTieneMasPresas (x : y : xs) = if snd x >= snd y
+                                        then elQueTieneMasPresas (x : xs)
+                                        else elQueTieneMasPresas (y : xs)
+------------------------------------------------------                                        
+losQueExploraron :: Territorio -> Manada -> [Nombre]
+losQueExploraron t (M l) = losQueExploraronM t l
+
+losQueExploraronM :: Territorio -> Lobo -> [Nombre]
+losQueExploraronM _ (Cria _)                = []
+losQueExploraronM t (Cazador _ _ l1 l2 l3)  = losQueExploraronM t l1 
+                                            ++ losQueExploraronM t l2 
+                                            ++ losQueExploraronM t l3 
+losQueExploraronM t (Explorador n ts l1 l2) = singularSi n (estaElTerritorioEn t ts) 
+                                            ++ losQueExploraronM t l1 
+                                            ++ losQueExploraronM t l2 
+
+estaElTerritorioEn :: Territorio -> [Territorio] -> Bool
+estaElTerritorioEn _ []       = False
+estaElTerritorioEn t (t1:ts1) = t == t1 || estaElTerritorioEn t ts1
 ------------------------------------------------------
 
 -- lineal cuadratica constante| costos invariante de representacion.
