@@ -92,9 +92,14 @@ esTesoro Tesoro = True
 esTesoro _      = False
 ------------------------------------------------------
 hayTesoroEn :: [Dir] -> Mapa -> Bool
-hayTesoroEn []     m       = contieneTesoro (cofreDe m)
-hayTesoroEn _      (Fin _) = False
-hayTesoroEn (d:ds) m       = hayTesoroEn ds (irPorElCamino d m)
+hayTesoroEn (d:ds) m = if null ds 
+                          then contieneTesoro (cofreDe m) 
+                          else hayTesoroEn ds (irPorElCamino d m)
+
+
+-- hayTesoroEn []     m       = contieneTesoro (cofreDe m)
+-- hayTesoroEn _      (Fin _) = False
+-- hayTesoroEn (d:ds) m       = hayTesoroEn ds (irPorElCamino d m)
 
 irPorElCamino :: Dir -> Mapa -> Mapa
 irPorElCamino _   (Fin m)              = Fin m
