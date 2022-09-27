@@ -27,7 +27,7 @@ removeS x (S xs n) = if elem x xs
                         else S xs n
 
 sacarTodosLos :: Eq a => a -> [a] -> [a]
-sacarTodosLos _ []     = []
+sacarTodosLos _ []      = []
 sacarTodosLos x1 (x:xs) = if x1 == x
                             then sacarTodosLos xs
                             else x1 : sacarTodosLos x1 xs
