@@ -1,4 +1,4 @@
-import SET
+import SetSinRepetidos
 
 {-	
 ------------------------------------------------------
@@ -40,11 +40,11 @@ pertenece :: Eq a => a -> [a] -> Bool
 pertenece n [] = False
 pertenece n (x:xs) = n == x || pertenece n xs
 --Costo: Cuadratica O(n^2). Invoca a la funcion "pertenece" por cada elemento de la lista dada.
-sinRepetidos :: Eq a => [a] -> [a]
-sinRepetidos [] = []
-sinRepetidos (x:xs) =   if pertenece x xs
-                            then sinRepetidos xs
-                            else x : sinRepetidos xs
+-- sinRepetidos :: Eq a => [a] -> [a]
+-- sinRepetidos [] = []
+-- sinRepetidos (x:xs) =   if pertenece x xs
+--                             then sinRepetidos xs
+--                             else x : sinRepetidos xs
 --Costo: Lineal O(n). Depende de la cantidad de elementos de la primera lista.
 -- equivalente a (++)
 append :: [a] -> [a] -> [a]
@@ -84,3 +84,24 @@ orderar xs =    let m = minimo xs
                     in m : ordenar (sacar m xs)
 
 --2|SET (CONJUNTO)|
+
+data Tree a = EmptyS | NodeT a (Tree a) (Tree a)
+------------------------------------------------------------------
+losQuePertenecen :: Eq a => [a] -> Set a -> [a]
+losQuePertenecen xs sa = elementosDeQuePertenecenA xs (setToList sa)
+
+elementosDeQuePertenecenA :: Eq a => [a] -> [a] -> [a]
+elementosDeQuePertenecenA []     _ = []
+elementosDeQuePertenecenA (x:xs) ys = if elem x ys
+                                            then x : elementosDeQuePertenecenA xs ys
+                                            else elementosDeQuePertenecenA xs ys 
+
+sinRepetidos :: Eq a => [a] -> [a]
+sinRepetidos []     = []
+sinRepetidos (x:xs) = if elem x xs
+                            then sinRepetidos xs 
+                            else x : sinRepetidos xs
+
+unirTodos :: Eq a => Tree (Set a) -> Set a
+unirTodos EmptyS           = emptyS
+unirTodos (NodeT sa t1 t2) = unionS sa (unionS (unirTodos t1) (unirTodos t2))
