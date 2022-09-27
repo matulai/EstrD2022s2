@@ -1,4 +1,5 @@
-import SetSinRepetidos
+-- import SetSinRepetidos
+import SetConRepetidos
 
 {-	
 ------------------------------------------------------
