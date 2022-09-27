@@ -108,24 +108,7 @@ caminoAlTesoro (Bifurcacion c m1 m2) = if (contieneTesoro c)
                                         then []
                                         else if (hayTesoro m1)
                                             then Izq : caminoAlTesoro m1
-                                            else Der : caminoAlTesoro m2
-{-
-caminoAlTesoro :: Mapa -> [Dir]
-caminoAlTesoro m =
-            case (caminoAlTesoro'' m) of
-                (Just indicacion) -> indicacion 
-                Nothing -> error "no hay tesoro"
-
-caminoAlTesoro'' :: Mapa -> Maybe [Dir]
-caminoAlTesoro'' (Fin c) = 
-            if hayTesoroEnCofre c
-                then Just []
-                else Nothing
-caminoAlTesoro'' (Bifurcacion c m1 m2) = 
-            if hayTesoroEnCofre c 
-                then Just []
-                else Izq : caminoAlTesoro'' ++ Der : caminoAlTesoro'' m2
--}
+                                            else Der : caminoAlTesoro m2 
 ------------------------------------------------------
 caminoDeLaRamaMasLarga :: Mapa -> [Dir]
 caminoDeLaRamaMasLarga (Fin _)               = []
@@ -248,9 +231,9 @@ idDelSector (S id _ _) = id
 componentesEn :: Sector -> [Componente] 
 componentesEn (S _ c _) = c
 
-poderDePropulsionDe :: Componente -> Int
-poderDePropulsionDe (Motor p)  = p
-poderDePropulsionDe _          = 0
+poderDePropulsionDeComponentes :: Componente -> Int
+poderDePropulsionDeComponentes (Motor p)  = p
+poderDePropulsionDeComponentes _          = 0
 
 barrilesEnAlmacen :: Componente -> [Barril]
 barrilesEnAlmacen (Almacen bs) = bs
@@ -274,7 +257,7 @@ propulsionDeLaNave (NodeT s t1 t2)  = poderDePropulsionDe (componentesEn s) + pr
 
 poderDePropulsionDe :: [Componente] -> Int
 poderDePropulsionDe []     = 0
-poderDePropulsionDe (c:cs) = poderDePropulsionDe c + poderDePropulsionDe cs
+poderDePropulsionDe (c:cs) = poderDePropulsionDeComponentes c + poderDePropulsionDe cs
 ------------------------------------------------------
 barriles :: Nave -> [Barril]
 barriles (N n) = barrilesEnLaNave n
@@ -307,29 +290,16 @@ asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
 asignarTripulanteA t ids (N n) = N (asignarTripulanteALosSectores t ids n)
 
 asignarTripulanteALosSectores :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
---PRECONDICIÓN: Todos los id de la lista existen en la nave.
-asignarTripulanteALosSectores _ []       tr     = tr
-asignarTripulanteALosSectores t (id:ids) tr     = asignarTripulanteAlSector t id tr
+asignarTripulanteALosSectores _ _   EmptyT         = EmptyT
+asignarTripulanteALosSectores t id (NodeT s t1 t2) = NodeT (asignarTripulanteS t id s) 
+                                                           (asignarTripulanteALosSectores t id t1)
+                                                           (asignarTripulanteALosSectores t id t2)
 
-asignarTripulanteAlSector :: Tripulante -> SectorId -> Tree Sector -> Tree Sector
---PRECONDICIÓN: Todos los id de la lista existen en la nave.
-asignarTripulanteAlSector _ _  EmptyT          = error "No existe el id dado" 
-asignarTripulanteAlSector t id (NodeT s t1 t2) = if id == idDelSector s
-                                                    then NodeT (agregarTripulante t s) t1 t2
-                                                    else NodeT s (asignarTripulanteAlSector t id t1) (asignarTripulanteAlSector t id t2) 
-
-agregarTripulante :: Tripulante -> Sector -> Sector
-agregarTripulante t (S id cs ts) = S id cs (t:ts)
-
--- asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
--- asignarTripulanteA t ids (N n) = N (asignarTripulanteANave t ids n)
-
--- asignarTripulanteANave :: Tripulante -> [SectorId] -> Tree Sector
--- asignarTripulanteANave t 
--- asignarTripulanteANave
-
-
-
+asignarTripulanteS :: Tripulante -> [SectorId] -> Sector -> Sector
+asignarTripulanteS t ids (S id cs ts) = 
+            if pertenece id ids
+                then S id cs (t : ts) 
+                else S id cs ts 
 ------------------------------------------------------
 sectoresAsignados :: Tripulante -> Nave -> [SectorId]
 sectoresAsignados t (N n) = sectoresAsignadosN t n 
@@ -357,9 +327,10 @@ tripulantesN (NodeT s t1 t2) = agregarTripulanteSinRepetidos (tripulantesEn s) (
 
 agregarTripulanteSinRepetidos :: [Tripulante] -> [Tripulante] -> [Tripulante]
 agregarTripulanteSinRepetidos []       ts2 = ts2
-agregarTripulanteSinRepetidos (t1:ts1) ts2 = if estaElTripulanteEn t1 ts2
-                                                then agregarTripulanteSinRepetidos ts1 ts2
-                                                else t1 : agregarTripulanteSinRepetidos ts1 ts2
+agregarTripulanteSinRepetidos (t1:ts1) ts2 = singularSi t1 (estaElTripulanteEn t1 ts2) ++ agregarTripulanteSinRepetidos ts1 ts2
+    --                                      if estaElTripulanteEn t1 ts2
+    --                                             then agregarTripulanteSinRepetidos ts1 ts2
+    --                                             else t1 : agregarTripulanteSinRepetidos ts1 ts2
 --4.|MANADA DE LOBOS|
 type Presa = String -- nombre de presa
 type Territorio = String -- nombre de territorio
