@@ -6,8 +6,8 @@
 ------------------------------------------------------
 -}
 unoSi :: Bool -> Int
-unoSi False = 0
 unoSi True  = 1
+unoSi _     = 0
 --1.|TIPOS RECURSIVOS SIMPLES|
     --1.1
 data Color = Azul | Rojo deriving Show
@@ -26,16 +26,16 @@ sonColoresIguales Rojo Rojo = True
 sonColoresIguales _    _    = False
 ------------------------------------------------------
 poner :: Color -> Celda -> Celda
-poner x y            = Bolita x y
+poner x y = Bolita x y
 ------------------------------------------------------
 sacar :: Color -> Celda -> Celda
 sacar _   CeldaVacia = CeldaVacia
-sacar x (Bolita y z) = if (sonColoresIguales x y) then z  
-                                                  else Bolita y (sacar x z)
+sacar x (Bolita y z) = if sonColoresIguales x y then z  
+                                                else Bolita y (sacar x z)
 ------------------------------------------------------
 ponerN :: Int -> Color -> Celda -> Celda
-ponerN 0 _  c          = c
-ponerN x cl c          = Bolita cl (ponerN (x - 1) cl c)
+ponerN 0 _  c = c
+ponerN x cl c = Bolita cl (ponerN (x - 1) cl c)
 -- poner cl (ponerN (x - 1) cl c)
 -- ponerN x cl c = ponerN (x - 1) cl (poner cl c) 
 ------------------------------------------------------
@@ -258,13 +258,12 @@ simplificarSum x         y = Sum x y
 
 simplificarProd :: ExpA -> ExpA -> ExpA
 simplificarProd (Valor 0) (Valor y) = Valor 0 
-simplificarProd (Valor 0) (Valor y) = Valor 0
+simplificarProd (Valor x) (Valor 0) = Valor 0
 simplificarProd x          y = Prod x y
+
+simplificarNeg :: ExpA -> ExpA
+simplificarNeg (Valor x) = Valor (simplificarNegSi x (x < 0))
 
 simplificarNegSi :: Int -> Bool -> Int
 simplificarNegSi x True = -(x)
 simplificarNegSi x _    = x
-
-simplificarNeg :: ExpA -> ExpA
-simplificarNeg (Valor x) = Valor (simplificarNegSi x (x < 0))
-simplificarNeg x         = Neg x     

@@ -8,11 +8,10 @@ data Set a = S [a] Int deriving Show
     INVARIANTE DE REPRESENTACIÓN: En S xs y
         -La lista "xs" no tiene repetidos.
         -
-
     CASOS VALIDOS:
-        -
+        - S [1,2,3,4]
     CASOS INVALIDOS:
-        -
+        - S [1,2,3,4,1,2,3]
 -}
 emptyS :: Set a
 -- Crea un conjunto vacío.
@@ -34,9 +33,7 @@ sizeS (S xs n) = n
 
 removeS :: Eq a => a -> Set a -> Set a
 --Borra un elemento del conjunto.
-removeS x (S xs n) = if elem x xs 
-                        then S (sacar x xs) (n - 1)
-                        else S xs n
+removeS x (S xs n) = S (sacar x xs) (n - 1)
 
 sacar :: Eq a => a -> [a] -> [a]
 sacar _ []     = []

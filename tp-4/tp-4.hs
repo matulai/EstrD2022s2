@@ -415,8 +415,8 @@ territoriosConExplorador (t:ts) n = (t,n) : territoriosConExplorador ts n
 unirTerritorios :: [(Territorio, [Nombre])] -> [(Territorio, [Nombre])] -> [(Territorio, [Nombre])]
 unirTerritorios  []           tns2 = tns2
 unirTerritorios ((t,ns):tns1) tns2 = if existeTerritorioEn t tns2
-                                    then unirTerritorios tns1 (agregarNombresEn ns t tns2)
-                                    else (t,ns) : unirTerritorios tns1 tns2
+                                        then unirTerritorios tns1 (agregarNombresEn ns t tns2)
+                                        else (t,ns) : unirTerritorios tns1 tns2
 
 existeTerritorioEn :: Territorio -> [(Territorio, [Nombre])] -> Bool
 existeTerritorioEn _ []       = False
@@ -424,10 +424,10 @@ existeTerritorioEn t (t1:t1s) = t == fst t1 || existeTerritorioEn t t1s
 
 agregarNombresEn :: [Nombre] -> Territorio -> [(Territorio, [Nombre])] -> [(Territorio, [Nombre])]
 --Sin territorios repetidos.
-agregarNombresEn _  _ []       = error "El territorio no existe"
+agregarNombresEn _  _ []              = error "El territorio no existe"
 agregarNombresEn ns t ((t1,ns1):tns1) = if t == t1
-                                    then (t1,ns1 ++ ns) : tns1
-                                    else (t1,ns1) : agregarNombresEn ns t tns1
+                                            then (t1,ns1 ++ ns) : tns1
+                                            else (t1,ns1) : agregarNombresEn ns t tns1
 ------------------------------------------------------
 superioresDelCazador :: Nombre -> Manada -> [Nombre]
 superioresDelCazador n (M l) = hastaElNombre n (superioresDelCazadorL n l)
