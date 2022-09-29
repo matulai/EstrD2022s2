@@ -3,6 +3,25 @@ module SetConRepetidos
 where
 
 data Set a = S [a] Int deriving Show
+{-
+    INVARIANTE DE REPRESENTACIÓN: En S xs y
+        -
+        -
+    CASOS VALIDOS:
+        -
+    CASOS INVALIDOS:
+        -
+-}
+
+{-
+emptyS :: Set a                             O(1)                   
+addS :: Eq a => a -> Set a -> Set a         O(1)
+belongs :: Eq a => a -> Set a -> Bool       O(n)
+sizeS :: Eq a => Set a -> Int               O(n^2)
+removeS :: Eq a => a -> Set a -> Set a      O(n)
+unionS :: Eq a => Set a -> Set a -> Set a   O(n)
+setToList :: Eq a => Set a -> [a]           O(n^2)
+-}
 
 emptyS :: Set a
 -- Crea un conjunto vacío.
@@ -30,25 +49,17 @@ unoSi _     = 0
 
 removeS :: Eq a => a -> Set a -> Set a
 -- Borra un elemento del conjunto.
-removeS x (S xs n) = if elem x xs 
-                        then S (sacarTodosLos x xs) (n - cantidadDe x xs)
-                        else S xs n
+removeS x (S xs n) = (S (sacar x xs) n) 
 
-cantidadDe :: Eq a => a -> [a] -> Int
-cantidadDe _ []     = 0
-cantidadDe x (y:ys) = unoSi (x == y) + cantidadDe x ys
-
-sacarTodosLos :: Eq a => a -> [a] -> [a]
-sacarTodosLos _ []      = []
-sacarTodosLos x1 (x:xs) = singularSi x1 (x1 == x) ++ sacarTodosLos x1 xs
-
-singularSi :: a -> Bool -> [a]
-singularSi x True = [x]
-singularSi _ _    = []
+sacar :: Eq a => a -> [a] -> [a]
+sacar _ []      = []
+sacar x1 (x:xs) = if x == x1
+                        then sacar x1 xs
+                        else x : sacar x1 xs
 
 unionS :: Eq a => Set a -> Set a -> Set a
 -- Dados dos conjuntos devuelve un conjunto con todos los elementos de ambos. conjuntos.
-unionS (S xs n) (S ys n1) = S (listaSinRepetidos xs ++ listaSinRepetidos ys) (n + n1) 
+unionS (S xs n) (S ys n1) = S (xs ++ ys) (n + n1) 
 
 setToList :: Eq a => Set a -> [a]
 -- Dado un conjunto devuelve una lista con todos los elementos distintos del conjunto.

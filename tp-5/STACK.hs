@@ -41,4 +41,4 @@ sinElUltimo (x:xs) = x : sinElUltimo xs
 
 lenS :: Stack a -> Int
 --Dada la cantidad de elementos en la pila. Costo: constante.
-lenS (S xs) = undefined
+lenS (S xs) = length xs
