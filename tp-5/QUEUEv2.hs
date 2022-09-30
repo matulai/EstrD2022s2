@@ -13,6 +13,16 @@ data Queue a = Q [a] deriving Show
     CASOS INVALIDOS:
         -
 -}
+--FIFO (first in, first out)
+--Los elementos deben encolarse por adelante de la lista y desencolarse por el final.
+{-
+Opereciones:                                    costos:
+            emptyQ :: Queue a                          O(1)
+            isEmptyQ :: Queue a -> Bool                O(1)
+            enqueue :: a -> Queue a -> Queue a         O(1)
+            firstQ :: Queue a -> a                     O(n)
+            dequeue :: Queue a -> Queue a              O(n)
+-}
 
 -- 1 : 2 : 3 : 5 : 6 : []
 --El primero que entro es 6 y el último es 1. Tomando como referencia eso realizar lo siguiente:

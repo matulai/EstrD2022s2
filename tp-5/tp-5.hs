@@ -203,5 +203,7 @@ agregarEnLaPosicion y x (x:xs) = agregarEnLaPosicion (y - 1) x xs
 
 --5|QUEUE CON DOS LISTAS|
 {-
-
+La ventaja recae en el costo, ya que tendra todas las operaciones constantes pero cada tantas operaciones
+se ejecutara una operacion cuadratica, lo cual decimos que tiene todas las operaciones constantes aunque
+alguna/s operacion de forma amortizada.
 -}

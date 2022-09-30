@@ -13,6 +13,17 @@ data Stack a = S [a]
     CASOS INVALIDOS:
         -
 -}
+--  LIFO (last in, first out) (como en una pila de platos)
+{-
+Opereciones:                                    costos:
+            emptyS :: Stack a                          O(1)
+            isEmptyS :: Stack a -> Bool                O(1)
+            push :: a -> Stack a -> Stack a            O(1)
+            top :: Stack a -> a                        O(1)
+            pop :: Stack a -> Stack a                  O(n)
+            lenS :: Stack a -> Int                     O(n)
+-}
+
 emptyS :: Stack a
 --Crea una pila vacía.
 emptyS = S []
