@@ -37,8 +37,9 @@ longitud :: [a] -> Int
 longitud []     = 0
 longitud (x:xs) = 1 + longitud xs
 
---Costo: Cuadratica O(n^2). Invoca a la funcion "factorial"(con un costo lineal) por cada elemento de la lista dada.
+--Costo: Cuadratica O(N^2). Invoca a la funcion "factorial"(con un costo lineal) por cada elemento de la lista dada.
 --El peor caso posible es que todos los numeros de la lista sean iguales.
+--Es costo depende de los valores de la lista de numeros, no de la longitud de la misma.
 factoriales :: [Int] -> [Int]
 factoriales []     = []
 factoriales (x:xs) = factorial x : factoriales xs
@@ -50,7 +51,7 @@ pertenece n []     = False
 pertenece n (x:xs) = n == x || pertenece n xs
 
 --Costo: Cuadratica O(n^2). Invoca a la funcion "pertenece" por cada elemento de la lista dada.
--- por cada elemento de la lista de elementos se ejecuta una funcion de costo lineal
+-- por cada elemento de la lista de elementos se ejecuta una funcion de costo lineal.
 -- sinRepetidos :: Eq a => [a] -> [a]
 -- sinRepetidos []     = []
 -- sinRepetidos (x:xs) =   if pertenece x xs
