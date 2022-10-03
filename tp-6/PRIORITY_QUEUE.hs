@@ -41,6 +41,10 @@ findMinPQ (PQ xs) = minimum xs
 deleteMinPQ :: Ord a => PriorityQueue a -> PriorityQueue a
 --Propósito: devuelve una priority queue sin el elemento más prioritario (el mínimo).
 --Precondición: parcial en caso de priority queue vacía.
-deleteMinPQ (PQ xs) = PQ (borrar (minium xs) xs)
+deleteMinPQ (PQ xs) = PQ (borrar (minimum xs) xs)
 
-borrar ::  
+borrar :: Ord a => a -> [a] -> [a]
+borrar _  []     = error "No existe"
+borrar x1 (x:xs) = if x1==x
+                        then xs
+                        else x : borrar x1 xs
