@@ -4,7 +4,7 @@ where
 
 data PriorityQueue a = PQ [a] 
 {-
-    INVARIANTE DE REPRESENTACIÓN: En S []
+    INVARIANTE DE REPRESENTACIÓN: En PQ [a]
         -
         -
     CASOS VALIDOS:
@@ -13,9 +13,9 @@ data PriorityQueue a = PQ [a]
         -
 -}
 {-
-Opereciones:                                    costos:
-            emptyQ :: Queue a                                                               O(1)
-            isEmptyQ :: Queue a -> Bool                                                     O(1)
+Opereciones:                                                                        costos:
+            emptyQ :: PriorityQueue a                                                               O(1)
+            isEmptyQ :: PriorityQueue a -> Bool                                                     O(1)
             insertPQ :: Ord a => a -> PriorityQueue a -> PriorityQueue a                    O(1)
             findMinPQ :: Ord a => PriorityQueue a -> a                                      O(n)
             deleteMinPQ :: Ord a => PriorityQueue a -> PriorityQueue a                      O(n)
@@ -41,10 +41,13 @@ findMinPQ (PQ xs) = minimum xs
 deleteMinPQ :: Ord a => PriorityQueue a -> PriorityQueue a
 --Propósito: devuelve una priority queue sin el elemento más prioritario (el mínimo).
 --Precondición: parcial en caso de priority queue vacía.
-deleteMinPQ (PQ xs) = PQ (borrar (minimum xs) xs)
+deleteMinPQ (PQ xs) = PQ (borrarMin xs)
+
+borrarMin :: Ord a => [a] -> [a] 
+borrarMin xs = borrar (minimum xs) xs
 
 borrar :: Ord a => a -> [a] -> [a]
-borrar _  []     = error "No existe"
+borrar _  []     = []
 borrar x1 (x:xs) = if x1==x
                         then xs
                         else x : borrar x1 xs
