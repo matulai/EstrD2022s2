@@ -104,7 +104,7 @@ unirMaps ((k,v):kvs) m1 m2 = case lookupM k m2 of
 Operaciones:                                                        costos:
         1. valuesM :: Eq k => Map k v -> [Maybe v]                          O(n^2)
         2. todasAsociadas :: Eq k => [k] -> Map k v -> Bool                 O(n^2)
-        3. listToMap :: Eq k => [(k, v)] -> Map k v                         O(n)
+        3. listToMap :: Eq k => [(k, v)] -> Map k v                         O(n^2)
         4. mapToList :: Eq k => Map k v -> [(k, v)]                         O(n^2)
         5. agruparEq :: Eq k => [(k, v)] -> Map k [v]                       O(n^2)
         6. incrementar :: Eq k => [k] -> Map k Int -> Map k Int             O(n^2)
