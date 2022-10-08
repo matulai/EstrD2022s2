@@ -5,6 +5,7 @@
 ||	Fecha De Inicio: 06/10/2022				        ||
 ------------------------------------------------------
 -}
+import EMPRESA
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 
 
@@ -104,11 +105,11 @@ maxBST :: Tree a -> a
 maxBST (NodeT x _ EmptyT) = x 
 maxBST (NodeT _ _ t2)     = maxBST t2
 
-balanceado :: Tree a -> Bool
--- Propósito: indica si el árbol está balanceado. Un árbol está balanceado cuando para cada
--- nodo la diferencia de alturas entre el subarbol izquierdo y el derecho es menor o igual a 1.
--- Costo: O(N2)
-balanceado EmptyT =
+-- balanceado :: Tree a -> Bool
+-- -- Propósito: indica si el árbol está balanceado. Un árbol está balanceado cuando para cada
+-- -- nodo la diferencia de alturas entre el subarbol izquierdo y el derecho es menor o igual a 1.
+-- -- Costo: O(N2)
+-- balanceado EmptyT =
 
 --Ejercicio 3
 {-
@@ -143,4 +144,4 @@ Operaciones:                                                        costos:
           operación assoc(log K) y keys(K) lo cual son de un costo menor al lineal.
         7.Se ejecuta la operacion mapToList(K log K).
 -}
-
+--Ejercicio 4
