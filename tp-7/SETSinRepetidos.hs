@@ -1,4 +1,4 @@
-module SetSinRepetidos
+module SETSinRepetidos
     (Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList)
 where
 
@@ -29,7 +29,9 @@ emptyS = S [] 0
 
 addS :: Eq a => a -> Set a -> Set a
 -- Dados un elemento y un conjunto, agrega el elemento al conjunto.
-addS x (S xs n) = agregar x xs
+addS x (S xs n) = if elem x xs
+                    then S xs n
+                    else S (x:xs) (n+1)
 
 belongs :: Eq a => a -> Set a -> Bool
 --Dados un elemento y un conjunto indica si el elemento pertenece al conjunto.
@@ -54,7 +56,7 @@ unionS :: Eq a => Set a -> Set a -> Set a
 unionS (S xs n) (S ys n1) = S (juntarSinRepetir xs ys) (n + n1)  
 
 juntarSinRepetir :: Eq a => [a] -> [a] -> [a]
-juntarSinRepetir []     ys = 
+juntarSinRepetir []     ys = []
 juntarSinRepetir (x:xs) ys = agregar x (juntarSinRepetir xs ys)
 
 agregar :: Eq a => a -> [a] -> [a]

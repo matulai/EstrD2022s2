@@ -1,7 +1,11 @@
 module EMPRESA
-    (Empresa, )
+    (Empresa, empresa, buscarPorCUIL, empleadosDelSector, todosLosCUIL, todosLosSectores,
+     agregarSector, agregarEmpleado, agregarASector, borrarEmpleado)
 where
-    
+
+import EMPLEADO
+import MAPSinRepetidos
+import SETSinRepetidos
 type SectorId = Int
 type CUIL = Int
 data Empresa = Emp (Map SectorId (Set Empleado)) (Map CUIL Empleado)
@@ -38,15 +42,12 @@ empresa = Emp emptyM emptyM
 buscarPorCUIL :: CUIL -> Empresa -> Empleado
 -- Propósito: devuelve el empleado con dicho CUIL.
 -- Costo: O(log E)
-buscarPorCUIL c (Emp _ ce) = empleadoConCUIL c ce 
-
-empleadoConCUIL :: CUIL -> Map CUIL Empleado -> Empleado
-empleadoConCUIL 
-empleadoConCUIL
+buscarPorCUIL c (Emp _ ce) = lookupM c ce  
 
 empleadosDelSector :: SectorId -> Empresa -> [Empleado]
 -- Propósito: indica los empleados que trabajan en un sector dado.
--- Costo: O(logS + E)
+-- Costo: O(log S + E)
+empleadosDelSector id (E se _) = lookupM id se 
 
 todosLosCUIL :: Empresa -> [CUIL]
 -- Propósito: indica todos los CUIL de empleados de la empresa.
