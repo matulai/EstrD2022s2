@@ -105,11 +105,12 @@ maxBST :: Tree a -> a
 maxBST (NodeT x _ EmptyT) = x 
 maxBST (NodeT _ _ t2)     = maxBST t2
 
--- balanceado :: Tree a -> Bool
--- -- Propósito: indica si el árbol está balanceado. Un árbol está balanceado cuando para cada
--- -- nodo la diferencia de alturas entre el subarbol izquierdo y el derecho es menor o igual a 1.
--- -- Costo: O(N2)
--- balanceado EmptyT =
+balanceado :: Tree a -> Bool
+-- Propósito: indica si el árbol está balanceado. Un árbol está balanceado cuando para cada
+-- nodo la diferencia de alturas entre el subarbol izquierdo y el derecho es menor o igual a 1.
+-- Costo: O(N^2)
+balanceado EmptyT          = True
+balanceado (NodeT _ t1 t2) = abs (highNodeT t1 - highNodeT) <= 1 && balanceado t1 && balanceado t2
 
 --Ejercicio 3
 {-
