@@ -1,9 +1,9 @@
 {-	
-------------------------------------------------------
+----------------------------------------------------------
 ||	PRÁCTICA N°7 || HEAPS Y BSTs                    ||
-||	Alumno: Matias Laime					        ||
-||	Fecha De Inicio: 06/10/2022				        ||
-------------------------------------------------------
+||	Alumno: Matias Laime			        ||
+||	Fecha De Inicio: 06/10/2022		        ||
+----------------------------------------------------------
 -}
 import EMPRESA
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
@@ -145,3 +145,38 @@ Operaciones:                                                        costos:
         7.Se ejecuta la operacion mapToList(K log K).
 -}
 --Ejercicio 4
+comenzarCon :: [SectorId] -> [CUIL] -> Empresa
+-- Propósito: construye una empresa con la información de empleados dada. Los sectores no
+-- tienen empleados. Costo: calcular.
+comenzarCon ids cs = agregarCuils cs (agregarSectores ids empresa)
+
+agregarCuils :: [Cuil] -> Empresa -> Empresa
+agregarCuils []     emp       = emp
+agregarCuils (c:cs) (E _ ce) = assoc c (empleado c) ce
+
+agregarSectores :: [SectorId] -> Empresa -> Empresa
+agregarSectores []       emp      = emp
+agregarSectores (id:ids) (E se _) = assoc id emptyS se
+
+recorteDePersonal :: Empresa -> Empresa
+-- Propósito: dada una empresa elimina a la mitad de sus empleados (sin importar a quiénes).
+-- Costo: calcular.
+recorteDePersonal emp = let cs = todosLosCUIL emp
+                        in recorte cs (div (length cs) 2) emp
+
+recorte :: [CUIL] -> Int -> Empresa -> Empresa
+recorte (c:cs) x emp = if length cs == x
+                        then emp
+                        else recorte cs x (borrarEmpleado c emp)
+
+
+convertirEnComodin :: CUIL -> Empresa -> Empresa
+-- Propósito: dado un CUIL de empleado le asigna todos los sectores de la empresa.
+-- Costo: calcular.
+convertirEnComodin c emp = agregarEmpleado (todosLosSectores emp) c emp
+
+esComodin :: CUIL -> Empresa -> Bool
+-- Propósito: dado un CUIL de empleado indica si el empleado está en todos los sectores.
+-- Costo: calcular.
+esComodin
+esComodin 
