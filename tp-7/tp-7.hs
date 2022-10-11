@@ -73,7 +73,17 @@ esBST :: Tree a -> Bool
 -- Propósito: indica si el árbol cumple con los invariantes de BST.
 -- Costo: O(N2)
 esBST EmptyT          = True
-esBST (NodeT _ t1 t2) = abs (highNodeT t1 - highNodeT t2) <= 1 && esBST t1 && esBST t2
+esBST (NodeT x t1 t2) = esElMayorEn x t1 && esElMenorEn t2 && esBST t1 && esBST t2
+
+esElMayorEn :: a -> Tree a -> Bool
+esElMayorEn _ EmptyT           = True
+esElMayorEn x (NodeT x' t1 t2) = x > x' && esElMayorEn x t1 && esElMayorEn x t2
+
+esElMenorEn :: a -> Tree a -> Bool
+esElMenorEn _ EmptyT           = True
+esElMenorEn x (NodeT x' t1 t2) = x < x' && esElMenorEn x t1 && esElMenorEn x t2
+
+elMaximo :: Tree a -> 
 
 elMaximoMenorA :: Ord a => a -> Tree a -> Maybe a
 -- Propósito: dado un BST y un elemento, devuelve el máximo elemento que sea menor al
@@ -105,12 +115,8 @@ balanceado :: Tree a -> Bool
 -- Propósito: indica si el árbol está balanceado. Un árbol está balanceado cuando para cada
 -- nodo la diferencia de alturas entre el subarbol izquierdo y el derecho es menor o igual a 1.
 -- Costo: O(N^2)
-balanceado EmptyT          = False
-balanceado (NodeT _ t1 t2) = (elementosEn t1) == (elementosEn t2)
-
-elementosEn :: Tree a -> Int
-elementosEn EmptyT          = 0
-elementosEn (NodeT _ t1 t2) = 1 + elementosEn t1 + elementosEn t2
+balanceado EmptyT          = True
+balanceado (NodeT _ t1 t2) = abs (highNodeT t1 - highNodeT t2) <= 1 && balanceado t1 && balanceado t2
 
 --Ejercicio 3
 {-
