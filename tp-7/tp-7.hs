@@ -83,8 +83,6 @@ esElMenorEn :: a -> Tree a -> Bool
 esElMenorEn _ EmptyT           = True
 esElMenorEn x (NodeT x' t1 t2) = x < x' && esElMenorEn x t1 && esElMenorEn x t2
 
-elMaximo :: Tree a -> 
-
 elMaximoMenorA :: Ord a => a -> Tree a -> Maybe a
 -- Propósito: dado un BST y un elemento, devuelve el máximo elemento que sea menor al
 -- elemento dado. Costo: O(log N)
