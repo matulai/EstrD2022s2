@@ -10,6 +10,18 @@ type SectorId = Int
 type CUIL = Int
 data Empresa = Emp (Map SectorId (Set Empleado)) (Map CUIL Empleado)
 
+instance Eq Empleado where 
+    e1 == e2 = cuil e1 == cuil e2
+
+instance Ord Empleado where
+    e1 <= e2 = cuil e1 <= cuil e2
+
+-- instance Show Persona where
+--     show p = "Persona { nombre <- "     ++ show (nombre p)
+--                     ++ ", apellido <- " ++ show (apellido p)
+--                     ++ ", edad <- "     ++ show (edad p)
+--                     ++ " }"
+
 {-
     INVARIANTE DE REPRESENTACIÓN: En E (Map SectorId (Set Empleado)) (Map CUIL Empleado)
         -El id de cada sector es único.
@@ -94,7 +106,7 @@ agregarASector id c (Emp se ce) = case lookupM c ce of
 borrarEmpleado :: CUIL -> Empresa -> Empresa
 -- Propósito: elimina al empleado que posee dicho CUIL.
 -- Costo: calcular.
-borrarEmpleado c (Emp se ce) = Emp (eliminarDeSectores (buscarPorCUIL c) (keys se) se) (deleteM c)
+borrarEmpleado c (Emp se ce) = Emp (eliminarDeSectores (buscarPorCUIL c se) (keys se) se) (deleteM c ce)
 
 eliminarDeSectores :: Empleado -> [SectorId] -> Map SectorId (Set Empleado) -> Map SectorId (Set Empleado)
 eliminarDeSectores e []       m = m

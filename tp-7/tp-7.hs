@@ -8,7 +8,6 @@
 import EMPRESA
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 
-
 arbol = NodeT 50 (NodeT 45 (NodeT 40 EmptyT EmptyT) (NodeT 47 EmptyT EmptyT)) (NodeT 55 (NodeT 53 EmptyT EmptyT) (NodeT 57 EmptyT EmptyT))
 
 --Ejercicio 2
@@ -48,8 +47,8 @@ armarBST EmptyT t2 = t2
 armarBST t1     t2 = NodeT (maxEnArbol t1) (delArbolMax t1) t2 
 
 maxEnArbol :: Ord a => Tree a -> a
-maxEnArbol (NodeT x EmptyT EmptyT) = x
-maxEnArbol (NodeT x t1 t2)         = maxEnArbol t2
+maxEnArbol (NodeT x _ EmptyT) = x
+maxEnArbol (NodeT x t1 t2)    = maxEnArbol t2
 
 delArbolMax :: Ord a => Tree a -> Tree a
 delArbolMax (NodeT _ EmptyT EmptyT) = EmptyT
@@ -153,15 +152,15 @@ Operaciones:                                                        costos:
 comenzarCon :: [SectorId] -> [CUIL] -> Empresa
 -- Propósito: construye una empresa con la información de empleados dada. Los sectores no
 -- tienen empleados. Costo: calcular.
-comenzarCon ids cs = agregarCuils cs (agregarSectores ids empresa)
+comenzarCon ids cs = agregarSectores ids (agregarCuils cs empresa) 
 
-agregarCuils :: [Cuil] -> Empresa -> Empresa
-agregarCuils []     emp       = emp
-agregarCuils (c:cs) (E _ ce) = assoc c (empleado c) ce
+agregarCuils :: [CUIL] -> Empresa -> Empresa
+agregarCuils []     emp = empresa
+agregarCuils (c:cs) emp = agregarEmpleado [] c (agregarCuils cs emp)
 
 agregarSectores :: [SectorId] -> Empresa -> Empresa
-agregarSectores []       emp      = emp
-agregarSectores (id:ids) (E se _) = assoc id emptyS se
+agregarSectores []       emp = emp
+agregarSectores (id:ids) emp = agregarSector id (agregarSectores ids emp)
 
 recorteDePersonal :: Empresa -> Empresa
 -- Propósito: dada una empresa elimina a la mitad de sus empleados (sin importar a quiénes).
@@ -183,5 +182,8 @@ convertirEnComodin c emp = agregarEmpleado (todosLosSectores emp) c emp
 esComodin :: CUIL -> Empresa -> Bool
 -- Propósito: dado un CUIL de empleado indica si el empleado está en todos los sectores.
 -- Costo: calcular.
-esComodin
-esComodin 
+esComodin c emp = elem c (todosLosCUIL e) && estaEnTodosLosSectores (todosLosSectores e) (buscarPorCUIL c e) e
+
+estaEnTodosLosSectores :: [SectorId] -> Empleado -> Empresa -> Bool
+estaEnTodosLosSectores []       e _   = True
+estaEnTodosLosSectores (id:ids) e emp = elem e (empleadosDelSector id) emp && estaEnTodosLosSectores ids e emp
