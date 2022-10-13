@@ -164,7 +164,7 @@ agregarSectores (id:ids) emp = agregarSector id (agregarSectores ids emp)
 
 recorteDePersonal :: Empresa -> Empresa
 -- Propósito: dada una empresa elimina a la mitad de sus empleados (sin importar a quiénes).
--- Costo: calcular.
+-- Costo: (E).
 recorteDePersonal emp = let cs = todosLosCUIL emp
                         in recorte cs (div (length cs) 2) emp
 
@@ -176,12 +176,12 @@ recorte (c:cs) x emp = if length cs == x
 
 convertirEnComodin :: CUIL -> Empresa -> Empresa
 -- Propósito: dado un CUIL de empleado le asigna todos los sectores de la empresa.
--- Costo: calcular.
+-- Costo: (I log I + S).
 convertirEnComodin c emp = agregarEmpleado (todosLosSectores emp) c emp
 
 esComodin :: CUIL -> Empresa -> Bool
 -- Propósito: dado un CUIL de empleado indica si el empleado está en todos los sectores.
--- Costo: calcular.
+-- Costo: (E + S + I * (log S + E)) .
 esComodin c emp = elem c (todosLosCUIL e) && estaEnTodosLosSectores (todosLosSectores e) (buscarPorCUIL c e) e
 
 estaEnTodosLosSectores :: [SectorId] -> Empleado -> Empresa -> Bool

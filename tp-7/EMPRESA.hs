@@ -41,9 +41,9 @@ Opereciones:                                                            costos:
             todosLosCUIL :: Empresa -> [CUIL]                                  Costo: O(E)
             todosLosSectores :: Empresa -> [SectorId]                          Costo: O(S)
             agregarSector :: SectorId -> Empresa -> Empresa                    Costo: O(logS)
-            agregarEmpleado :: [SectorId] -> CUIL -> Empresa -> Empresa        
-            agregarASector :: SectorId -> CUIL -> Empresa -> Empresa           
-            borrarEmpleado :: CUIL -> Empresa -> Empresa                       
+            agregarEmpleado :: [SectorId] -> CUIL -> Empresa -> Empresa        Costo: O(I log I)
+            agregarASector :: SectorId -> CUIL -> Empresa -> Empresa           Costo: O(log C)
+            borrarEmpleado :: CUIL -> Empresa -> Empresa                       Costo: O(I log I + log C)
 -}
 
 empresa :: Empresa
@@ -82,7 +82,7 @@ agregarSector id (Emp se ce) = Emp (assocM id emptyS se) ce
 
 agregarEmpleado :: [SectorId] -> CUIL -> Empresa -> Empresa
 -- Propósito: agrega un empleado a la empresa, en el que trabajará en dichos sectores y tendrá
--- el CUIL dado. Costo: calcular.
+-- el CUIL dado. Costo: (I log I) siendo I la cantidad de sectores de la empresa.
 agregarEmpleado ids c (Emp se ce) = let e = incorporarSectores ids (empleado c)
                                     in Emp (empleadoASectores e ids se) (assocM c e ce)
 
@@ -98,14 +98,14 @@ incorporarSectores (id:ids) e = incorporarSector id e
 
 agregarASector :: SectorId -> CUIL -> Empresa -> Empresa
 -- Propósito: agrega un sector al empleado con dicho CUIL.
--- Costo: calcular.
+-- Costo: (log C) siendo C la cantidad de cuils de la empresa.
 agregarASector id c (Emp se ce) = case lookupM c ce of
                                     Just e  -> Emp se (assocM c (incorporarSector id e) ce)
                                     Nothing -> Emp se ce
 
 borrarEmpleado :: CUIL -> Empresa -> Empresa
 -- Propósito: elimina al empleado que posee dicho CUIL.
--- Costo: calcular.
+-- Costo: (I log I + log C) siendo I la cantidad de id de sectores en la empresa y C la cantidad de Cuils.
 borrarEmpleado c (Emp se ce) = Emp (eliminarDeSectores (buscarPorCUIL c se) (keys se) se) (deleteM c ce)
 
 eliminarDeSectores :: Empleado -> [SectorId] -> Map SectorId (Set Empleado) -> Map SectorId (Set Empleado)
