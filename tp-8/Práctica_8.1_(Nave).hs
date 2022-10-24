@@ -65,7 +65,7 @@ agregarASector :: [Componente] -> SectorId -> Nave -> Nave
 --Eficiencia: O(C + log S), siendo C la cantidad de componentes dados.
 agregarASector cs id (N mId mN mhT) = case lookupM id mId of
                                             Just s  -> N (assocM id (agregarComponentes cs s) mId) mN mhT
-                                            Nothing -> N mId mN mhT
+                                            Nothing -> N (assocM id (agregarComponentes cs (crearS id)) mId) mN mhT
 
 agregarComponentes :: [Componente] -> Sector -> Sector
 --Eficiencia: O(C)
@@ -81,11 +81,11 @@ asignarASector n id (N mId mN mhT) = let Just s = lookupM id mId
                                          Just t = lookupM n mN
                                          sn     = agregarT n s 
                                          tn     = asignarS id t in 
-                                        N (assocM id sn mId) (assocM n tn mN) (asignarSectorATripulanteH t tn mhT)
+                                        N (assocM id sn mId) (assocM n tn mN) (asignarSectorATripulanteH tn mhT)
 
-agregarSectorATripulanteH :: Ord Tripulante -> Tripulante -> Tripulante -> MaxHeap Tripulante -> MaxHeap Tripulante
+agregarSectorATripulanteH :: Ord Tripulante -> Tripulante -> MaxHeap Tripulante -> MaxHeap Tripulante
 --Precondición: El tripulante y el sector existen.
-agregarSectorATripulanteH t tn mhT = if t == maxH mhT
+agregarSectorATripulanteH tn mhT = if tn == maxH mhT
                                         then insertH tn (deleteMaxH mhT)
                                         else insertH (maxH mhT) (agregarSectorATripulanteH t tn (deleteMaxH mhT)) 
 
@@ -109,7 +109,7 @@ sinSectoresAsignados n = tripulantesSinLaburar (tripulantesN n)
 tripulantesSinLaburar :: [Tripulante] -> [Tripulante]
 --Eficiencia: O(T)
 tripulantesSinLaburar []     = []
-tripulantesSinLaburar (t:ts) = if size (sectoresT t) == 0
+tripulantesSinLaburar (t:ts) = if    size (sectoresT t) == 0
                                     then t : tripulantesSinLaburar ts 
                                     else tripulantesSinLaburar ts
 

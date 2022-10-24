@@ -17,7 +17,7 @@ Invariante de Representación:
 fundarEscuela :: EscuelaDeMagia
 --Propósito: Devuelve una escuela vacía.
 --Eficiencia: O(1)
-fundarEscuela = emptyS emptyM emptyPQ
+fundarEscuela = EDM emptyS emptyM emptyPQ
 
 estaVacia :: EscuelaDeMagia -> Bool
 --Propósito: Indica si la escuela está vacía.
@@ -63,9 +63,9 @@ enseñar :: Hechizo -> Nombre -> EscuelaDeMagia -> EscuelaDeMagia
 --Precondición: Existe un mago con dicho nombre.
 --Eficiencia: O(M log M + log H)
 enseñar h n (EDM sM mNM pqM) =  let m = aprender h (fromJust (lookup n mNM)) in
-                                EDM (addS h sM) (assoc n  mNM) (enseñarHechizoAPQ m h pqM)
+                                EDM (addS h sM) (assoc n  mNM) (enseñarHechizoAPQ m pqM)
 
-enseñarHechizoAPQ :: Mago -> Hechizo -> PriorityQueue Mago -> PriorityQueue Mago
+enseñarHechizoAPQ :: Mago -> PriorityQueue Mago -> PriorityQueue Mago
 enseñarHechizoAPQ m pqM = if m == maxPQ pqM
                               then insertPQ m (deleteMaxPQ pqM)
                               else insertPQ (maxPQ pqM) (enseñarHechizoAPQ m (deleteMaxPQ pqM)) 
