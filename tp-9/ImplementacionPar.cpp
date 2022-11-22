@@ -42,6 +42,6 @@ Par divisionYResto(int n, int m) {
 // es la división y la segunda el resto entre ambos números
     Par p;
     p.x = n/m;
-    p.y = (n * p.x) - m; 
+    p.y = n%m; 
     return(p);
 }
