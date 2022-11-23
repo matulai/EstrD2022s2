@@ -19,13 +19,13 @@ struct  SwHeaderSt {
 };
 
 Switch newSwitch() {
-  // COMPLETAR
   SwHeaderSt* s = new SwHeaderSt;
   s->root = NULL;
-  return (s); // REEMPLAZAR
+  return (s); 
 }
 
 SNode* newNode() {
+// Crea un nuevo nodo vacio. Solo se utiliza del lado de implementador.
   SNode* newNode = new SNode;
   newNode->boca1 = NULL;
   newNode->boca2 = NULL;
@@ -85,44 +85,46 @@ void Desconectar(Ruta r, Switch s) {
   LiberarRutaIterator(ir);
 }
 
-// Hacer una subtarea para que no se creen muchos Switchs y otra subtarea que devuelve las rutas en el caso de
-// que el nodo actual sea NULL y asi extendes las rutas con la boca de esa nodo.
-
-Rutas disponiblesADistancia(Switch s, int d) {
-  if (d == 0) {
-    Rutas rs = emptyRutas();
-    ConsRuta(rutaVacia(), rs);
-    return rs;
-   } else {
-    SNode* n = s->root;
-    Rutas rs = disponiblesADistanciaN(s, n, d);
-    delete n;
-    return rs;
-  }
+// Si la funcion ExtenderTodasLasRutasCon() recibe como parametro una lista de rutas vacia no hace nada. 
+Rutas disponiblesADistanciaN(SNode* n, int d) {
+  Rutas rsTotal = emptyRutas();
+  if (d != 0) {
+    Rutas rsBoca1; Rutas rsBoca2;
+    if (n != NULL) {
+      rsBoca1 = disponiblesADistanciaN(n->boca1, d - 1);
+      ExtenderTodasLasRutasCon(Boca1, rsBoca1);
+      rsBoca2 = disponiblesADistanciaN(n->boca2, d - 1);
+      ExtenderTodasLasRutasCon(Boca2, rsBoca2);
+      AgregarA_LasRutasDe_(rsTotal, rsBoca1);
+      AgregarA_LasRutasDe_(rsTotal, rsBoca2);
+      return rsTotal;
+    } else {
+      rsBoca1 = disponiblesADistanciaN(n, d - 1);
+      ExtenderTodasLasRutasCon(Boca1, rsBoca1);
+      rsBoca2 = disponiblesADistanciaN(n, d - 1);
+      ExtenderTodasLasRutasCon(Boca2, rsBoca2);
+      AgregarA_LasRutasDe_(rsTotal, rsBoca1);
+      AgregarA_LasRutasDe_(rsTotal, rsBoca2);
+      return rsTotal;
+    }
+  } else {
+    if (n == NULL) {
+      ConsRuta(rutaVacia(), rsTotal);
+      return rsTotal;
+    } else if (n->conexion == NULL){
+      ConsRuta(rutaVacia(), rsTotal);
+      return rsTotal;
+    } else {
+      return rsTotal;
+    }
+  } 
 }
 
-
-// Si la funcion ExtenderTodasLasRutasCon() recibe como parametro una lista de rutas vacia no hace nada. 
-Rutas disponiblesADistanciaN(Switch s, SNode* n, int d) {
-  Rutas rsTotal = emptyRutas();
-  ConsRuta(rutaVacia(), rsTotal);
-  SNode* boca1N = n->boca1;
-  SNode* boca2N = n->boca2;
-  if (d != 0) {
-    Rutas rsBoca1 = disponiblesADistanciaN(s, boca1N, d - 1);
-    ExtenderTodasLasRutasCon(Boca1, rsBoca1);
-    Rutas rsBoca2 = disponiblesADistanciaN(s, boca2N, d - 1);
-    ExtenderTodasLasRutasCon(Boca2, rsBoca2);
-    AgregarA_LasRutasDe_(rsTotal, rsBoca1);
-    AgregarA_LasRutasDe_(rsTotal, rsBoca2);
-  } 
-  if (n == NULL) {
-    return rsTotal;
-  } else if (n->conexion == NULL){
-    return rsTotal;
-  } else {
-    return emptyRutas();
-  }
+// Hacer una subtarea para que no se creen muchos Switchs y otra subtarea que devuelve las rutas en el caso de
+// que el nodo actual sea NULL y asi extendes las rutas con la boca de esa nodo.
+Rutas disponiblesADistancia(Switch s, int d) {
+    Rutas rs = disponiblesADistanciaN(s->root, d);
+    return rs;
 }
 
 // Rutas disponiblesADistancia(Switch s, int d) {
@@ -192,6 +194,19 @@ Rutas disponiblesADistanciaN(Switch s, SNode* n, int d) {
   // LiberarQSw(tempQ2);
   // return (rs); // REEMPLAZAR
   // }
+
+void LiberarTree(SNode* s) {
+  if (s != NULL) {
+    LiberarTree(s->boca1);
+    LiberarTree(s->boca2);
+    delete s;
+  }
+}
+
+void LiberarSwitch(Switch s) {
+  LiberarTree(s->root);
+  delete s;
+}
 
 //------------------------------------------------------------
 // ESTRUCTURA AUXILIAR COLA DE SIGUIENTES PARA RECORRER LINEALMENTE EL SWITCH
@@ -303,21 +318,21 @@ void ShowSwitch(Switch s, int offset) {
 }
 
 
-void LiberarSwitch(Switch s) {
-  QNodeSw* currentQNSw;
-  NextsQueueStSw* toProcess = emptyQSw();
-  EnqueueQSw(toProcess, NULL, s->root);
-  while (not isEmptyQSw(toProcess)) {
-    currentQNSw = DequeueFirstQSw(toProcess);
-    if (currentQNSw->node->boca1 != NULL) {
-      EnqueueQSw(toProcess, NULL, currentQNSw->node->boca1);
-    }
-    if (currentQNSw->node->boca2 != NULL) {
-      EnqueueQSw(toProcess, NULL, currentQNSw->node->boca2);
-    }
-    delete currentQNSw->node;
-    delete currentQNSw;
-  }
-  LiberarQSw(toProcess);
-  delete s;
-}
+// void LiberarSwitch(Switch s) {
+//   QNodeSw* currentQNSw;
+//   NextsQueueStSw* toProcess = emptyQSw();
+//   EnqueueQSw(toProcess, NULL, s->root);
+//   while (not isEmptyQSw(toProcess)) {
+//     currentQNSw = DequeueFirstQSw(toProcess);
+//     if (currentQNSw->node->boca1 != NULL) {
+//       EnqueueQSw(toProcess, NULL, currentQNSw->node->boca1);
+//     }
+//     if (currentQNSw->node->boca2 != NULL) {
+//       EnqueueQSw(toProcess, NULL, currentQNSw->node->boca2);
+//     }
+//     delete currentQNSw->node;
+//     delete currentQNSw;
+//   }
+//   LiberarQSw(toProcess);
+//   delete s;
+// }

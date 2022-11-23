@@ -38,13 +38,13 @@ bool estaDisponible(Ruta r, DualNet dn) {
   // Revisar, cuidado con el caso de que no haya rutas disponibles en la distancia n != 0.
   Rutas rs = disponiblesADistancia(dn->sw, lenRuta(r));
   RutasIterator irs = iniciarRecorridoDeRutas(rs);
-  Ruta current;
+  bool disponible = true;
   while (not (estaAlFinalDeLasRutas(irs) || mismaRuta(r,rutaActual(irs))) ) {
-    current = rutaActual(irs);
+    disponible = mismaRuta(r,rutaActual(irs));
     AvanzarASiguienteRuta(irs);
   }
   LiberarRutasIterator(irs);
-  return(mismaRuta(r,current));
+  return(disponible);
 }
 
 void ConectarCliente(Ruta r, Cliente c, DualNet dn) {

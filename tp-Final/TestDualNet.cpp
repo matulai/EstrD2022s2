@@ -32,9 +32,13 @@ int main() {
     ConectarCliente(ruta0,  maria,   dn);
     ConectarCliente(ruta1,  diana,   dn);
     ConectarCliente(ruta12, tatiana, dn);
-        
+    DesconectarCliente(maria, dn);
     ShowDualNet(dn);
 
     BinHeapC dnTemp = pinPorCliente(dn);
     ShowHC(dnTemp, 2);
+
+    if (estaDisponible(ruta0, dn)) {
+        cout<<"FUNCIONAAAAA"<<endl;
+    }
 }

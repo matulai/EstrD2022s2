@@ -35,25 +35,24 @@ int main() {
     SnocBoca(ruta12, Boca2);
     Conectar(constanza, ruta12, s);
 
-    ShowSwitch(s, 2);
+    // ShowSwitch(s, 2);
 
     Desconectar(ruta1, s);
     Conectar(ana, ruta1, s);
 
-    ShowSwitch(s, 2);
+    // ShowSwitch(s, 2);
 
     Desconectar(ruta0, s);
     Desconectar(ruta1, s);
     Desconectar(ruta2, s);
 
-    ShowSwitch(s, 2);
-    
-    // LiberarSwitch(s);
-    // Conectar(ana, ruta1, s);
     // ShowSwitch(s, 2);
+    
+    LiberarSwitch(s);
+    // Conectar(ana, ruta1, s);
+    ShowSwitch(s, 2);
     //terminate called after throwing an instance of 'std::bad_alloc' what(): std::bad_alloc
 
-    Rutas rs = disponiblesADistancia(s, 4);
-    ShowRutas(rs,2);
-    ShowRutas(rs, 0);
+    // Rutas rs = disponiblesADistancia(s, 2);
+    // ShowRutas(rs,2);
 }
