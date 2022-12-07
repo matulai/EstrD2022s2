@@ -38,7 +38,9 @@ int main() {
     BinHeapC dnTemp = pinPorCliente(dn);
     ShowHC(dnTemp, 2);
 
-    if (estaDisponible(ruta0, dn)) {
+    if (estaDisponible(ruta1, dn)) {
         cout<<"FUNCIONAAAAA"<<endl;
+    } else {
+        cout<<"No disponible"<<endl;
     }
 }

@@ -37,22 +37,22 @@ int main() {
 
     // ShowSwitch(s, 2);
 
-    Desconectar(ruta1, s);
-    Conectar(ana, ruta1, s);
-
-    // ShowSwitch(s, 2);
-
-    Desconectar(ruta0, s);
-    Desconectar(ruta1, s);
-    Desconectar(ruta2, s);
-
-    // ShowSwitch(s, 2);
-    
-    LiberarSwitch(s);
+    // DesconectarConInvariante(ruta1, s);
     // Conectar(ana, ruta1, s);
+
+    // ShowSwitch(s, 2);
+
+    // DesconectarConInvariante(ruta0, s);
+    // DesconectarConInvariante(ruta1, s);
+    // DesconectarConInvariante(ruta2, s);
+
     ShowSwitch(s, 2);
+    
+    // LiberarSwitch(s);
+    // Conectar(ana, ruta1, s);
+    // ShowSwitch(s, 2);
     //terminate called after throwing an instance of 'std::bad_alloc' what(): std::bad_alloc
 
-    // Rutas rs = disponiblesADistancia(s, 2);
-    // ShowRutas(rs,2);
+    Rutas rs = disponiblesADistancia(s, 2);
+    ShowRutas(rs,2);
 }

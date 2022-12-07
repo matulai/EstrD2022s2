@@ -13,6 +13,7 @@ Switch newSwitch();
 void Conectar(Cliente c, Ruta r, Switch s);  
 void Desconectar(Ruta r, Switch s);  
 Rutas disponiblesADistancia(Switch s, int d);
+void DesconectarConInvariante(Ruta r, Switch s);
 
 void LiberarSwitch(Switch s);
 void ShowSwitch(Switch s, int offset);
